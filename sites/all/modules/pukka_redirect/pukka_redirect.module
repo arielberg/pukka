@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+* Implements hook_form_FORM_ID_alter().
+*/
+function pukka_redirect_form_alter(&$form, &$form_state, $form_id)
+{
+  if($form_id == 'user_profile_form')
+  {
+    $form['#submit'][] = 'pukka_redirect_profile_form_submit';
+  }
+}
+
+function pukka_redirect_profile_form_submit($form, &$form_state)
+{
+  $form_state['redirect'] = '/user';
+}
+?>
+

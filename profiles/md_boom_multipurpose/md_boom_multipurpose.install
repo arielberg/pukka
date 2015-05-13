@@ -1,0 +1,623 @@
+<?php
+  /**
+    * @file md_boom_multipurpose.install
+    */
+
+  /**
+    * Implements hook_install_alter()
+    */
+  function md_boom_multipurpose_install_tasks_alter(&$tasks, $install_state) {
+    $tasks['install_finished']['function'] = 'md_boom_multipurpose_finished_install';
+    $tasks['install_select_profile']['display'] = FALSE;
+  }
+
+  /**
+    * Implements hook_install()
+    */
+  function md_boom_multipurpose_install() {
+    # Load database data file
+    $file_path = DRUPAL_ROOT . '/profiles/md_boom_multipurpose/sql_dump/database.data';
+    $handle = fopen($file_path, 'r');
+    $contents = fread($handle, filesize($file_path));
+    fclose($handle);
+
+    # Set variables
+    $database = unserialize($contents);
+    variable_set('md_boom_multipurpose_database', $database);
+
+    # Install like standard profile
+    # Add text formats.
+    $filtered_html_format = array(
+      'format' => 'filtered_html',
+      'name' => 'Filtered HTML',
+      'weight' => 0,
+      'filters' => array(
+        # URL filter.
+        'filter_url' => array(
+          'weight' => 0,
+          'status' => 1,
+        ),
+        # HTML filter.
+        'filter_html' => array(
+          'weight' => 1,
+          'status' => 1,
+        ),
+        # Line break filter.
+        'filter_autop' => array(
+          'weight' => 2,
+          'status' => 1,
+        ),
+        # HTML corrector filter.
+        'filter_htmlcorrector' => array(
+          'weight' => 10,
+          'status' => 1,
+        ),
+      ),
+    );
+    $filtered_html_format = (object) $filtered_html_format;
+    filter_format_save($filtered_html_format);
+
+    $full_html_format = array(
+      'format' => 'full_html',
+      'name' => 'Full HTML',
+      'weight' => 1,
+      'filters' => array(
+        # URL filter.
+        'filter_url' => array(
+          'weight' => 0,
+          'status' => 1,
+        ),
+        # Line break filter.
+        'filter_autop' => array(
+          'weight' => 1,
+          'status' => 1,
+        ),
+        # HTML corrector filter.
+        'filter_htmlcorrector' => array(
+          'weight' => 10,
+          'status' => 1,
+        ),
+      ),
+    );
+    $full_html_format = (object) $full_html_format;
+    filter_format_save($full_html_format);
+
+    # Insert default pre-defined node types into the database. For a complete
+    # list of available node type attributes, refer to the node type API
+    # documentation at: http:#api.drupal.org/api/HEAD/function/hook_node_info.
+    $types = array(
+      array(
+        'type' => 'page',
+        'name' => st('Basic page'),
+        'base' => 'node_content',
+        'description' => st("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
+        'custom' => 1,
+        'modified' => 1,
+        'locked' => 0,
+      ),
+      array(
+        'type' => 'article',
+        'name' => st('Article'),
+        'base' => 'node_content',
+        'description' => st('Use <em>articles</em> for time-sensitive content like news, press releases or blog posts.'),
+        'custom' => 1,
+        'modified' => 1,
+        'locked' => 0,
+      ),
+    );
+
+    foreach ($types as $type) {
+      $type = node_type_set_defaults($type);
+      node_type_save($type);
+      node_add_body_field($type);
+    }
+
+    # Insert default pre-defined RDF mapping into the database.
+    $rdf_mappings = array(
+      array(
+        'type' => 'node',
+        'bundle' => 'page',
+        'mapping' => array(
+          'rdftype' => array('foaf:Document'),
+        ),
+      ),
+      array(
+        'type' => 'node',
+        'bundle' => 'article',
+        'mapping' => array(
+          'field_image' => array(
+            'predicates' => array('og:image', 'rdfs:seeAlso'),
+            'type' => 'rel',
+          ),
+          'field_tags' => array(
+            'predicates' => array('dc:subject'),
+            'type' => 'rel',
+          ),
+        ),
+      ),
+    );
+    foreach ($rdf_mappings as $rdf_mapping) {
+      rdf_mapping_save($rdf_mapping);
+    }
+
+    # Default "Basic page" to not be promoted and have comments disabled.
+    variable_set('node_options_page', array('status'));
+    variable_set('comment_page', COMMENT_NODE_HIDDEN);
+
+    # Don't display date and author information for "Basic page" nodes by default.
+    variable_set('node_submitted_page', FALSE);
+
+    # Enable user picture support and set the default to a square thumbnail option.
+    variable_set('user_pictures', '1');
+    variable_set('user_picture_dimensions', '1024x1024');
+    variable_set('user_picture_file_size', '800');
+    variable_set('user_picture_style', 'thumbnail');
+
+    # Allow visitor account creation with administrative approval.
+    variable_set('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL);
+
+    # Enable default permissions for system roles.
+    $filtered_html_permission = filter_permission_name($filtered_html_format);
+    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content', 'access comments', $filtered_html_permission));
+    user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content', 'access comments', 'post comments', 'skip comment approval', $filtered_html_permission));
+
+    # Create a default role for site administrators, with all available permissions assigned.
+    $admin_role = new stdClass();
+    $admin_role->name = 'administrator';
+    $admin_role->weight = 2;
+    user_role_save($admin_role);
+    user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+    # Set this as the administrator role.
+    variable_set('user_admin_role', $admin_role->rid);
+
+    # Assign user 1 the "administrator" role.
+    db_insert('users_roles')
+      ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+      ->execute();
+
+    # Create a Home link in the main menu.
+    $item = array(
+      'link_title' => st('Home'),
+      'link_path' => '<front>',
+      'menu_name' => 'main-menu',
+    );
+    menu_link_save($item);
+
+    # Update the menu router information.
+    menu_rebuild();
+
+    # Enable the admin theme.
+    db_update('system')
+      ->fields(array('status' => 1))
+      ->condition('type', 'theme')
+      ->condition('name', 'seven')
+      ->execute();
+    variable_set('admin_theme', 'seven');
+    variable_set('node_admin_theme', '1');
+    # Install others for this theme
+    theme_enable(array('md_boom_multi'));
+    variable_set('theme_default', 'md_boom_multi');
+
+    # List all blocks
+    $blocks = _block_rehash('md_boom_multi');
+    $existed_blocks = array();
+    foreach ($blocks as $block) {
+      $existed_blocks[] = "{$block['module']}_{$block['delta']}";
+    }
+
+    # Assign blocks existed in region right
+
+    $blocks = array(
+      1 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "twitter",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-21",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => 1,
+      ),
+      2 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "flickr",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-22",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => 1,
+      ),
+      3 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "footer_column_1",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "footer_col_1",
+        'pages' => "",
+        'cache' => 1,
+      ),
+      4 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "footer_column_2",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "footer_col_2",
+        'pages' => "",
+        'cache' => 1,
+      ),
+      5 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "footer_column_3",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "footer_col_3",
+        'pages' => "",
+        'cache' => 1,
+      ),
+      6 => array(
+        'module' => "md_boom_multi_module",
+        'delta' => "footer_column_4",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "footer_col_4",
+        'pages' => "",
+        'cache' => 1,
+      ),
+      7 => array(
+        'module' => "md_slider",
+        'delta' => "4",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "mega_slider_1",
+        'pages' => "",
+        'cache' => -1,
+      ),
+      8 => array(
+        'module' => "md_slider",
+        'delta' => "5",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "mega_slider_2",
+        'pages' => "",
+        'cache' => -1,
+      ),
+      16 => array(
+        'module' => "panels_mini",
+        'delta' => "overview_testimonials",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-19",
+        'region' => "content",
+        'pages' => "home_mega_slider_2",
+        'cache' => -1,
+      ),
+      17 => array(
+        'module' => "panels_mini",
+        'delta' => "partner_testimonials",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-18",
+        'region' => "content",
+        'pages' => "home_mega_slider_1",
+        'cache' => -1,
+      ),
+      20 => array(
+        'module' => "search",
+        'delta' => "form",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-1",
+        'region' => "search",
+        'pages' => "",
+        'cache' => -1,
+      ),
+      22 => array(
+        'module' => "superfish",
+        'delta' => "1",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "0",
+        'region' => "main_menu",
+        'pages' => "",
+        'cache' => -1,
+      ),
+      26 => array(
+        'module' => "system",
+        'delta' => "main",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-24",
+        'region' => "content",
+        'pages' => "",
+        'cache' => -1,
+      ),
+      37 => array(
+        'module' => "views",
+        'delta' => "partners-block_our_customers",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-17",
+        'region' => "content",
+        'pages' => "home_mega_slider_2
+services
+about_us",
+        'cache' => -1,
+      ),
+      38 => array(
+        'module' => "views",
+        'delta' => "service-block_demo_services",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-26",
+        'region' => "content",
+        'pages' => "home_mega_slider_2",
+        'cache' => -1,
+      ),
+      39 => array(
+        'module' => "views",
+        'delta' => "blog-block_recent_posts",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-20",
+        'region' => "content",
+        'pages' => "home_mega_slider_1",
+        'cache' => -1,
+      ),
+      40 => array(
+        'module' => "views",
+        'delta' => "about_the_author-block_author",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-25",
+        'region' => "content",
+        'pages' => "home_mega_slider_2",
+        'cache' => -1,
+      ),
+      41 => array(
+        'module' => "views",
+        'delta' => "features-block_features",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-27",
+        'region' => "content",
+        'pages' => "home_mega_slider_1",
+        'cache' => -1,
+      ),
+      43 => array(
+        'module' => "views",
+        'delta' => "overview-block_overview",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-21",
+        'region' => "content",
+        'pages' => "about_us",
+        'cache' => -1,
+      ),
+      44 => array(
+        'module' => "views",
+        'delta' => "skills-block_our_skills",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-22",
+        'region' => "content",
+        'pages' => "about_us",
+        'cache' => -1,
+      ),
+      45 => array(
+        'module' => "views",
+        'delta' => "tags_widget-tags_widget",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-23",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => -1,
+      ),
+      47 => array(
+        'module' => "views",
+        'delta' => "624aed9f9f508fcbb4280f6dcb2821a8",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-23",
+        'region' => "content",
+        'pages' => "home_mega_slider_1",
+        'cache' => -1,
+      ),
+      48 => array(
+        'module' => "views",
+        'delta' => "b650edd19e6f2ee73e9e34b8b45cd6c6",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-27",
+        'region' => "content",
+        'pages' => "services",
+        'cache' => -1,
+      ),
+      49 => array(
+        'module' => "views",
+        'delta' => "380b4e279db62ce30b7f5e2d78ca81d7",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-24",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => -1,
+      ),
+      50 => array(
+        'module' => "views",
+        'delta' => "94d0bf06d3e5d7489a0c51f7183fb32f",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-20",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => -1,
+      ),
+      51 => array(
+        'module' => "views",
+        'delta' => "ba0baddd4efaa30425e652a58bd5a173",
+        'theme' => "md_boom_multi",
+        'status' => "1",
+        'weight' => "-19",
+        'region' => "sidebar",
+        'pages' => "blog
+blog3
+node/*",
+        'cache' => -1,
+      ),
+    );
+    $query = db_insert('block')->fields(array('module', 'delta', 'theme', 'status', 'weight', 'region', 'pages', 'cache'));
+    foreach ($blocks as $block) {
+      if (in_array($block['module'] . '_' . $block['delta'], $existed_blocks)) {
+        db_update('block')
+          ->fields($block)
+          ->condition('module', $block['module'])
+          ->condition('delta', $block['delta'])
+          ->execute();
+      }
+    }
+  }
+
+  /**
+    * Copy directory function
+    */
+  function md_boom_multipurpose_copy_directory($source, $destination) {
+    if (!is_dir($source))
+      exit("{$source} is not a directory.");
+
+    if (!file_exists($destination))
+      mkdir($destination);
+
+    $handle = opendir($source);
+    while (FALSE !== ($file = readdir($handle))) {
+      if ($file == '.' || $file == '..')
+        continue;
+
+      $file_path = "{$source}/{$file}";
+      if (is_dir($file_path)) {
+        md_boom_multipurpose_copy_directory($file_path, "{$destination}/{$file}");
+        continue;
+      }
+
+      copy($file_path, "{$destination}/{$file}");
+    }
+
+    closedir($handle);
+  }
+
+  /**
+  * Finished install function
+  */
+  function md_boom_multipurpose_finished_install(&$install_state) {
+    # Install demo data if request install
+    $install_option = variable_get('md_boom_multipurpose_theme_install_option');
+    if ($install_option) {
+      $database = variable_get('md_boom_multipurpose_database', NULL);
+      if ($database != NULL && is_array($database)) {
+        foreach ($database['data'] as $name => $records) {
+          # Not update data for variable table
+          if (in_array($name, array('variable', 'system')))
+            continue;
+
+          if (!db_table_exists($name)) {
+            db_create_table($name, $database['schema'][$name]);
+          }
+
+          # Empty data in table
+          db_truncate($name)->execute();
+
+          # Insert data into table
+          $first_record = (array)array_shift($records);
+          $fields = array_keys($first_record);
+          if (count($fields) == 0 && $first_record == NULL) continue;
+          $query = db_insert($name)->fields($fields)->values($first_record);
+
+          foreach ($records as $record) {
+            $record = (array)$record;
+		        if ($record != NULL) {
+              $query->values($record);
+            }
+          }
+	        $query->execute();
+        }
+      }
+
+      # Copy files need for demo
+      $source = DRUPAL_ROOT . '/profiles/md_boom_multipurpose/files';
+      $destination = DRUPAL_ROOT . '/sites/default/files';
+      md_boom_multipurpose_copy_directory($source, $destination);
+
+      # Copy libraries
+      $lib_source = DRUPAL_ROOT . '/profiles/md_boom_multipurpose/libraries';
+      $drupal_mkdir = DRUPAL_ROOT . '/sites/all/libraries';
+      $lib_destination = $drupal_mkdir;
+      md_boom_multipurpose_copy_directory($lib_source, $lib_destination);
+
+      # Disable features module
+      db_update('system')
+        ->fields(array('status' => 0))
+        ->condition('name' , 'md_boom_multipurpose_features_module')
+        ->execute();
+    }
+
+    drupal_set_title(st('@drupal installation complete', array('@drupal' => drupal_install_profile_distribution_name())), PASS_THROUGH);
+    $messages = drupal_set_message();
+
+    # Remember the profile which was used.
+    variable_set('install_profile', drupal_get_profile());
+    variable_set('install_task', 'done');
+
+    # Flush all caches to ensure that any full bootstraps during the installer
+    # do not leave stale cached data, and that any content types or other items
+    # registered by the install profile are registered correctly.
+    drupal_flush_all_caches();
+
+    # Install profiles are always loaded last
+    db_update('system')
+      ->fields(array('weight' => 1000))
+      ->condition('type', 'module')
+      ->condition('name', drupal_get_profile())
+      ->execute();
+
+    # Cache a fully-built schema.
+    drupal_get_schema(NULL, TRUE);
+
+    # Run cron to populate update status tables (if available) so that users
+    # will be warned if they've installed an out of date Drupal version.
+    # Will also trigger indexing of profile-supplied content or feeds.
+    drupal_cron_run();
+
+    if (isset($messages['error'])) {
+      $output = '<p>' . st('Review the messages above before visiting <a href="@url">your new site</a>.', array('@url' => url(''))) . '</p>';
+    }
+    else {
+      # Since any module can add a drupal_set_message, this can bug the user
+      # when we redirect him to the front page. For a better user experience,
+      # remove all the message that are only notifications message.
+      drupal_get_messages('status', TRUE);
+      drupal_get_messages('completed', TRUE);
+      # Migrate adds its messages under the wrong type, see #1659150.
+      drupal_get_messages('ok', TRUE);
+      $output = '<p>' .  st('<a href="@url">Visit your new site</a>.', array('@url' => url(''))) . '</p>';
+    }
+
+    return $output;
+  }
+  

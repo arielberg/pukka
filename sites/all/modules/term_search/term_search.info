@@ -1,0 +1,14 @@
+name = Term Search
+description = Search taxonomy terms as rendered by Drupal (with fields).
+package = Search
+core = 7.x
+dependencies[] = taxonomy
+dependencies[] = search
+dependencies[] = field
+
+; Information added by drupal.org packaging script on 2012-07-04
+version = "7.x-1.0-beta1"
+core = "7.x"
+project = "term_search"
+datestamp = "1341439071"
+

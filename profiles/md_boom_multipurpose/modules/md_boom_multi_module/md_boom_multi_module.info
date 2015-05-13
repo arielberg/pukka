@@ -1,0 +1,4 @@
+name = MD Boom Multi Module
+description = Module for MD Boom Multi Theme configuration
+core = 7.x
+package = MD Boom

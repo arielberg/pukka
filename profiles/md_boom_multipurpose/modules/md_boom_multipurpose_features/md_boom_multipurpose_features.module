@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the MD Boom Multipurpose Features feature.
+ */
+
+include_once 'md_boom_multipurpose_features.features.inc';

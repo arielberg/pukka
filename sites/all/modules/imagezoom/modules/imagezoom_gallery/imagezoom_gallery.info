@@ -1,0 +1,12 @@
+name = Image Zoom Gallery
+description = Provides a gallery formatter for the Image Zoom module.
+core = 7.x
+
+dependencies[] = imagezoom
+
+; Information added by Drupal.org packaging script on 2014-12-13
+version = "7.x-2.0-beta1"
+core = "7.x"
+project = "imagezoom"
+datestamp = "1418512090"
+

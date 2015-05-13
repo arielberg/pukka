@@ -1,0 +1,823 @@
+<?php
+/**
+ * @file * Implements Alipay in Drupal Commerce checkout.
+ * for help: arielberg@gmail.com
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_pelecard_menu() {
+  $items['pelecard_result/bad'] = array(
+    'page callback' => 'commerce_pelecard_bad_result',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['pelecard_iframe'] = array(
+    'page callback' => 'pelecard_iframe',
+    'page arguments' => array(1),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  $items['pelecard_result/good'] = array(
+    'page callback' => 'commerce_pelecard_good_result',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );   
+  $items['admin/pelecard_theme'] = array(
+	'title'=> t('Pelecard advanced settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('pelecard_theme_form'),
+    'access arguments' => array('administer payment methods'),
+    'type' => MENU_CALLBACK,
+  ); 
+  $items['admin/pelecard_extra_data'] = array(
+	'title'=> t('Pelecard advanced settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('pelecard_extra_data_form'),
+    'access arguments' => array('administer payment methods'),
+    'type' => MENU_CALLBACK,
+  ); 
+  return $items;
+}   
+function pelecard_iframe($order_id){
+	$pargs = $_SESSION['iframe_vars'];
+	$form = drupal_get_form("commerce_pelecard_redirect_form",$pargs[0],$pargs[1]);
+	print "<html><body>".drupal_render($form)."<script>document.getElementById('commerce-pelecard-redirect-form').submit();</script></body></html>";
+	die();
+}
+function pelecard_extra_data_form($form){		
+	$defaults = variable_get("pelecard_sync_fields",array());
+	foreach(field_info_field_map() as $key=>$val){			
+		if(isset($val['bundles']['commerce_customer_profile'])){
+			if(in_array($val["type"],array("text"))){
+				$form["relate_".$key] = array(	
+					'#type' => 'select',
+					'#title' => t("Sync '%field_name' with",array('%field_name'=>$key)),
+					'#description' => t('Pass this field value to commerce as the selected data'),
+					'#options' => array(""=>t("None"),"id"=>t("ID")),					
+					'#default_value' => isset($defaults[$key])?$defaults[$key]:"");
+			}
+		}
+	}		
+	$form['payments_start'] = array(	
+					'#type' => 'textfield',
+					'#title' => t("Start Payments from this total order value"),
+					'#description' => t('-1 or empty for never, 0 for always'),					
+					'#default_value' => isset($defaults['payments_start'])?$defaults['payments_start']:"");
+	$form['maxPayments'] = array(	
+					'#type' => 'textfield',
+					'#title' => t("Max Payments (when enabled)"),												
+					'#default_value' => isset($defaults['maxPayments'])?$defaults['maxPayments']:1);
+			 
+	$form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'submit'
+	);	
+	return $form;
+}
+function pelecard_extra_data_form_submit($form,$form_values){
+	$sync = array();
+	foreach($form_values['values'] as $field_name=>$val){		
+		if(strpos($field_name,"relate_")===0){
+			if($val=="")continue;
+			$field = str_replace("relate_","",$field_name);
+			$sync[$field] = $val;						
+		}
+	}	
+	foreach(array("payments_start","maxPayments") as $field_name){
+		$sync[$field_name] = $form_values['values'][$field_name];
+	}
+	variable_set("pelecard_sync_fields",$sync);
+}
+function pelecard_theme_form($form){	
+	$defaults = array(
+    'supportPhone'=>'',
+    'Theme'=>'0',
+    'hidePciDssLogo'=>0,
+    'hidePelecardLogo'=>0,
+    'hideParmx' => 0,
+    'language'=>'auto',   
+    'Background' => '',
+ 	'topMargin' => '0px', 
+ 	'logo'=>'',
+ 	'smallLogo'=>'',
+ 	'backgroundImage'=>'',
+ 	'backgroundImage_repeat'=>'no-repeat',
+ 	'backgroundImage_position'=>'left top', 
+ 	'method'=>'iframe',
+     'iframe_style' => 'width:600px;height:400px',	
+  );
+  $saved_settings = variable_get("pelecard_theme",array());
+  $settings= $saved_settings + $defaults;
+  //drupal_set_message("<pre>".print_r($saved_settings,1)."</pre>");	
+   $form['method'] = array(
+		'#type' => 'select',
+		'#title' => t('Method'),
+		'#description' => t('Iframe - the client dosn\'t leave the site.')."<br/>".
+						  t('Redirect - the client leave the site for the payments.'),
+		'#default_value' => $settings['method'],
+		'#options' => array('iframe'=>'Iframe','redirect'=>'Redirect'),
+	);
+  $form['language'] = array(
+    '#type' => 'select',
+    '#title' => t('Pelecard Language'),
+    '#description' => t('Select the Language in pelecard system.'),
+    '#options' => array("he"=>t("Hebrew"),"en"=>t("English"),"auto"=>t("Auto - According to user's language")),
+    '#required' => TRUE,
+    '#default_value' => $settings['language'],
+  );
+  $form['Theme'] = array(   
+      '#type' => 'select',   
+      '#title' => t('Pelecard Language'),
+      '#description' => t('Select the Language in pelecard system.'),
+      '#default_value' => $settings['Theme'],
+      '#options' => array("0"=>t("Gray"),
+                          "1"=>t("Black"),
+                          "2"=>t("Blue"),
+                          "3"=>t("Green"),
+                          "4"=>t("Purple"),
+                          "5"=>t("Red"),
+                          "6"=>t("Yellow")),
+  );
+   $form['supportPhone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Support Phone'),
+    '#default_value' => $settings['supportPhone'],
+    '#description' => t('Support Phone to apear in pelecard site'),
+  ); 
+  $form['hidePciDssLogo'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide PciDss logo'),
+    '#description' => t('Support Hide PciDss logo in pelecard site'),
+    '#default_value' => $settings['hidePciDssLogo'],
+  );   
+   $form['hidePelecardLogo'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide Pelecard logo'),
+    '#description' => t('Hide Pelecard logo in pelecard site'),
+    '#default_value' => $settings['hidePelecardLogo'],
+  ); 
+  $form['hideParmx'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide Param X'),
+    '#description' => t('Hide Param X (order id) from pelecard site'),
+    '#default_value' => $settings['hideParmx'],
+  ); 
+   $form['Background'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Backroung Color'),
+    '#field_prefix' => '#',
+    '#default_value' => $settings['Background'],
+    '#description' => t('Backroung Color pelecard site'),
+  );  
+  $form['logo'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Logo'),
+    '#upload_location'    => 'public://pelecard',
+    '#default_value' => $settings['logo'],
+    '#upload_validators' => array('file_validate_extensions'=> array('png jpg gif pdf')),
+    '#description' => t("Store's logo to display in pelecard site"),
+  );
+  $form['smallLogo'] = array(
+    '#type' => 'managed_file',
+    '#title' => t('Small Logo'),
+    '#upload_location'    => 'public://pelecard',
+    '#default_value' => $settings['smallLogo'],
+    '#upload_validators' => array('file_validate_extensions'=> array('png jpg gif pdf')),
+    '#description' => t("Store's  small logo to display in pelecard site"),
+  );
+  $form['topMargin'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Top Margin'),
+    '#default_value' => $settings['topMargin'],
+  );
+  
+  $form['backgroundImage'] = array(
+    '#type' => 'managed_file',    
+    '#upload_location'    => 'public://pelecard',
+    '#default_value' => $settings['backgroundImage'],
+    '#upload_validators' => array('file_validate_extensions'=> array('png jpg gif pdf')),
+    '#description' => t("Background-image to display in pelecard site"),   
+    '#title' => t('Background Image File'),
+  );
+  $form['backgroundImage_repeat'] = array(   
+      '#type' => 'select',   
+      '#title' => t('BackgroundImage Repeat'),
+      '#description' => t('Repeat options for background image.'),
+      '#default_value' => $settings['backgroundImage_repeat'],
+      '#options' => array("repeat"=>t("Repeat"),
+                          "repeat-x"=>t("Repeat-x"),
+                          "repeat-y"=>t("Repeat-y"),
+                          "no-repeat"=>t("no-repeat"),
+                         ),
+  );
+  $form['backgroundImage_position'] = array(   
+      '#type' => 'select',   
+      '#title' => t('Pelecard Language'),
+      '#description' => t('Select the Language in pelecard system.'),
+      '#default_value' => $settings['backgroundImage_position'],
+      '#options' => array("left top"=>t("left top"),
+                          "left center"=>t("left center"),
+                          "left bottom"=>t("left bottom"),
+                          "right top"=>t("right top"),
+                          "right center"=>t("right center"),
+                          "right bottom"=>t("right bottom"),
+                          "center top"=>t("center top"),
+                          "center center"=>t("center center"),
+                          "center bottom"=>t("center bottom")),
+  );
+ $form['iframe_style']= array(   
+      '#type' => 'textfield',   
+      '#title' => t('Iframe style'),
+      '#description' => t('Only when working in iframe mode - change iframe style attribute.'),
+      '#default_value' => $settings['iframe_style'],
+      
+  );
+
+   $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'submit'
+  );
+	return $form;
+}
+function pelecard_theme_form_validate($form,$form_values){
+	//drupal_set_message("<pre>".print_r($form_values['values'],1)."</pre>");
+	if ($form_values['values']['Background']&&!preg_match('/^[a-f0-9]{6}$/i', $form_values['values']['Background'])) {
+     form_error($form['Background'], t('Color Is not in the right format - Color must be in HEX format (but without #)'));
+   }
+}
+function pelecard_theme_form_submit($form,$form_values){
+	foreach($form_values['values'] as $v=>$k){
+		if(!$k)unset($form_values['values'][$v]);
+	}
+	variable_set("pelecard_theme",$form_values['values']);
+	variable_set("commerce_pelecard_is_iframe",$form_values['values']['method']=='iframe');
+	drupal_set_message(t("Settings has been saved"));
+	//drupal_goto("admin/commerce/config/payment-methods");
+}
+
+function commerce_pelecard_bad_result(){			
+    $ParmX = $_POST['parmx'];
+    if($ParmX == ""){
+		watchdog('commerce_pelecard', 'Error responce from pelecard with no Paramx',array(), WATCHDOG_INFO);
+		drupal_set_message("Error, Please check your pelecard cradentials");
+		return;
+	}
+    $Result = $_POST['result'];  
+    watchdog('commerce_pelecard', 'Payment Error  in order @order_number<br/>'.print_r($Result,true), 
+				array('@order_number' => $ParmX), WATCHDOG_INFO);
+    $order=commerce_order_load($ParmX);
+    $payment_method = commerce_payment_method_instance_load($order->data['payment_method']);
+    //var_dump(commerce_payment_method_instance_load('pelecard'));die();
+    $error_code = substr($Result,0,3); 
+    $parms = array("userName"=>$payment_method['settings']['userName'],
+                 "password"=>$payment_method['settings']['password'],
+                 "termNo"=>$payment_method['settings']['termNo'],
+                 "code"=>$error_code);                                      
+    list($code, $result) = pelecard_do_post_operation("CheckError",$parms);
+    $notification = array("trade_no"=>$order->order_id,
+                        "total"=>$order->commerce_order_total[LANGUAGE_NONE][0]["amount"],
+                        "currency"=> $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
+                        "trade_status"=>"TRADE_CLOSED",
+                        "msg"=>$result);          
+    drupal_set_message(t("Transaction Error: !msg",array("!msg"=>$result))); 
+    commerce_payment_redirect_pane_previous_page($order);     
+    $goto = commerce_checkout_order_uri($order);
+    if(variable_get("commerce_pelecard_is_iframe",true)){
+		print "<html><body><script>window.top.location.href = '../".$goto."';</script></body></html>";
+		die();
+	}
+	else {
+	   drupal_goto($goto);
+	}
+   // commerce_order_status_update($order, 'checkout_checkout');             
+   // drupal_goto("checkout/".$ParmX);
+  //  commerce_pelecard_notify_submit($order, $payment_method,$notification);       
+    
+    drupal_set_title(t("Error"));    
+    return t("The Following error has occured:")."<br/>".$error_code.":".$result;
+}      
+function commerce_pelecard_good_result($a=null,$b=null){
+  $Result = $_POST['result'];  
+  $authNum = $_POST['authNum'];
+  $ParmX = $_POST['parmx'];
+  watchdog('commerce_pelecard', 'Pelecard called good result for order @order_number.<br/>'.print_r($Result,true), 
+				array('@order_number' => $ParmX), WATCHDOG_INFO);
+  $order=commerce_order_load($ParmX);
+  $payment_method = commerce_payment_method_instance_load($order->data['payment_method']); 
+  $parms = array("userName"=>$payment_method['settings']['userName'],
+                 "password"=>$payment_method['settings']['password'],
+                 "termNo"=>$payment_method['settings']['termNo'],
+                 "ParmX"=>$ParmX);  
+  $notification = array("trade_no"=>$order->order_id,
+							"total"=>$order->commerce_order_total[LANGUAGE_NONE][0]["amount"],
+							"currency"=> $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
+							"trade_status"=>"WAITING_APROVAL");
+  commerce_pelecard_notify_submit($order, $payment_method,$notification);
+  
+  usleep(200000);	                                    
+  for($i=0;$i<5;$i++){
+	  watchdog('commerce_pelecard', 'Order @order_number authentication try @i', 
+				array('@order_number' => $ParmX,'@i'=>$i), WATCHDOG_INFO);
+	  list($code, $result) = pelecard_do_post_operation("ChkGoodParmX",$parms);
+	  $results = explode(";",$result);
+	  //success       
+	  if(count($results)>1){        
+	   $notification["trade_status"] = "TRADE_SUCCESS";
+	   commerce_pelecard_notify_submit($order, $payment_method,$notification);
+	   //commerce_payment_redirect_pane_next_page($order);    
+	   commerce_checkout_complete($order);
+	   break;
+	  }	     
+	}
+	$end_url = commerce_checkout_order_uri($order);	
+	if(variable_get("commerce_pelecard_is_iframe",true)){
+		print "<html><body><script>window.top.location.href = '../".$end_url."';</script></body></html>";
+		die();
+	}
+	else {
+		drupal_goto($end_url);
+	}
+
+  return "";
+}
+## Submit the data into pelecard servers
+	function pelecard_do_post_operation($operation, $data, $optional_headers = null)	{
+		$params = array('http' => array(
+				'method' => 'POST',
+				'content' => http_build_query($data)
+				));
+	
+		$url = 'https://ws101.pelecard.biz/webservices.asmx/'.$operation;
+		
+		if ($optional_headers !== null) {
+			$params['http']['header'] = $optional_headers;
+		}
+		$ctx = stream_context_create($params);
+		$fp = @fopen($url, 'rb', false, $ctx);
+		if (!$fp) {
+			throw new Exception("Problem with $url, $php_errormsg");
+		}
+		$response = @stream_get_contents($fp);
+		if ($response === false) {
+			throw new Exception("Problem reading data from $url, $php_errormsg");
+		}
+		return array(substr(trim(strip_tags($response)),0,3), trim(strip_tags($response)));
+	}
+/**
+ * Implements hook_commerce_payment_method_info().
+ */
+function commerce_pelecard_commerce_payment_method_info() {
+  $payment_methods = array();
+  $is_iframe = variable_get("commerce_pelecard_is_iframe",true);  
+  $payment_methods['pelecard'] = array(
+    'base' => 'commerce_pelecard',
+    'title' => t('PeleCard'),
+    'terminal' => FALSE,
+    'offsite' => TRUE,
+    'offsite_autoredirect' => $is_iframe!==true,
+  );
+
+  return $payment_methods;
+}
+
+/**
+ * Payment method callback: settings form.
+ */
+function commerce_pelecard_settings_form($settings = NULL) {
+  $form = array();
+  $settings = (array) $settings + array(
+    'userName' => 'PeleTest',
+    'password' => 'Pelecard@2013',
+    'termNo' => '0962210',
+    'language'=>'auto', 
+  );
+
+  $form['userName'] = array(
+    '#type' => 'textfield',
+    '#title' => t('User Name'),
+    '#description' => t('The User Name of PeleCard'),
+    '#default_value' => $settings['userName'],
+    '#required' => TRUE,
+  );      
+  $act_key =file_get_contents('http://pelecard.net/?en='.url('',array('absolute'=>true)));
+  $form['activation_key'] = array(
+    '#type' => 'hidden',        
+    '#default_value' => $act_key,    
+  );
+  $form['password'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Password'),
+    '#description' => t('The Password of Pelecard'),
+    '#default_value' => $settings['password'],
+    '#required' => TRUE,
+  );
+  $form['termNo'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Term No'),
+    '#description' => t('The Trem Number Code'),
+    '#default_value' => $settings['termNo'],
+    '#required' => TRUE,
+  ); 
+  $form['advanced'] = array(
+	"#type"=>"markup",
+	"#markup"=>l(t("Theme Settings"),"admin/pelecard_theme")
+	);
+  $form['seperator'] = array(
+	"#type"=>"markup",
+	"#markup"=>" | ",
+	);
+   $form['extra'] = array(
+	"#type"=>"markup",
+	"#markup"=>l(t("Data Settings"),"admin/pelecard_extra_data")
+	);
+  return $form;
+}
+/**
+ * Payment method callback: adds a message to the submission form.
+ */
+function commerce_pelecard_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
+  $form['pelecard_information'] = array(
+    '#markup' => '<span class="commerce-pelecard-info">' . t('(Continue with checkout to complete payment via PeleCard.)') . '</span>',
+  );
+
+  return $form;
+}
+function pel_get_from_post($id=""){
+return isset($_POST[$id])?$_POST[$id]:"";
+}
+function commerce_pelecard_form_commerce_checkout_form_payment_alter(&$form,$values){
+		unset($form['help']);		
+}
+
+/**
+ * Payment method callback: redirect form.
+ */
+function commerce_pelecard_redirect_form($form, &$form_state, $order, $payment_method) {      
+  if (empty($payment_method['settings']['termNo'])) {
+    drupal_set_message(t('PeleCard is not configured for use. No Partner ID has been specified.'), 'error');
+    return array();
+  }
+  
+  $is_iframe = variable_get("commerce_pelecard_is_iframe",true);  
+  $theme_settings =variable_get("pelecard_theme",array());
+
+  if($is_iframe && !isset($_SESSION['iframe_vars'])){
+	 $_SESSION['iframe_vars'] = array($order, $payment_method);
+	 $form['iframe'] = array('#markup'=>'<iframe id="frame" name="frame" 
+											frameborder="0" scrolling="yes" src="../../pelecard_iframe" 
+										style="'.$theme_settings['iframe_style'].'"></iframe>');
+	 return $form;
+  }
+  unset($theme_settings['iframe_style']);
+  unset($_SESSION['iframe_vars']);  
+  $wrapper       = entity_metadata_wrapper('commerce_order', $order);
+  $currency_code = $wrapper->commerce_order_total->currency_code->value();
+  $Pelecard_curs = array("ILS"=>1,"EUR"=>978,"USD"=>2);
+  if(!in_array($currency_code,array_keys($Pelecard_curs))){ 
+    drupal_set_message(t('Cannot use PeleCard with this Currency.Please contact the site administrator'), 'error');
+    commerce_order_status_update($order, 'canceled',FALSE,NULL,"Unsupported Currency");
+    return array();
+  } 
+  $currency_pelecard_code = $Pelecard_curs[$currency_code]; 
+  $amount = $amount = $wrapper->commerce_order_total->amount->value();
+  print "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>";
+  $line = commerce_line_item_load($order->commerce_line_items[LANGUAGE_NONE][0]['line_item_id']);
+  $prod = node_load($line->data['context']['entity']['entity_id']);        
+  $customer = commerce_customer_profile_load($order->commerce_customer_billing[LANGUAGE_NONE][0]["profile_id"]);   
+  $txt1 ="";
+  if(isset($customer->commerce_customer_address[LANGUAGE_NONE][0]['name_line'])){
+    $txt1 = $customer->commerce_customer_address[LANGUAGE_NONE][0]['name_line'];
+  }
+  $txt2 = $prod->title;     
+  $settings = array(   
+    'cancel_return' => url('checkout/' . $order->order_id . '/payment/back/' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
+    'return' => url('checkout/' . $order->order_id . '/payment/return' . $order->data['payment_redirect_key'], array('absolute' => TRUE)),
+  );  
+  $data = array(     
+    'Parmx'=>  $order->order_number,
+    'goodUrl' => url('pelecard_result/good',array("absolute"=>true)),
+    'errorUrl' => url('pelecard_result/bad',array("absolute"=>true)),
+    '_input_charset' => 'UTF-8',
+    'show_url' => $settings['return'],
+    'out_trade_no' => $order->order_number,
+    'subject' => t('order !order_id', array('!order_id' => $order->order_number)),
+    'body' => t('order !order_id', array('!order_id' => $order->order_number)),
+    'total' => commerce_currency_amount_to_decimal($amount . '00',$order->commerce_order_total[LANGUAGE_NONE][0]['currency_code']),
+  	'pageName' => 'ajaxPage',
+  	'currency' => $currency_pelecard_code,
+  	'creditTypeFrom' => pel_get_from_post('creditTypeFrom'),
+  //	'ValidateLink' => $_POST['ValidateLink'],
+  //	'ErrorLink' => $_POST['ErrorLink'],  	
+  //	'maxPayments' => pel_get_from_post('maxPayments'),
+  //	'minPaymentsNo' => pel_get_from_post('minPaymentsNo'),  	
+  //	'logo' =>  "http://54.228.197.89/pele/themes/bartik/logo.png",//pel_get_from_post('Logo'),
+  //	'smallLogo' => pel_get_from_post('smallLogo'),
+  //	'hidePciDssLogo' => $_POST['hidePciLogo'],
+  //	'hidePelecardLogo' => $_POST['hidePciLogo'],
+  //  	'Theme' => '0',
+  //	'Background' => '000000',
+  //  	'backgroundImage' => $_POST['backgroundImage'],
+  //  	'topMargin' => '0px',
+  //  	'supportedCardTypes' => $_POST['supportedCardTypes'],
+  //  	'parmx' => $_POST['Parmx'],
+  // 	'hideParmx' => 1,
+  //	'supportPhone' => pel_get_from_post('supportPhone'),
+  	'text1' => $txt1,
+  	'text2' => $txt2,
+  	'text3' => "",
+  	'text4' => "",
+  	'text5' => "",
+  	'cancelUrl' => pel_get_from_post('cancelUrl'),
+  	'mustConfirm' => pel_get_from_post('mustConfirm'),
+  	'confirmationText' => pel_get_from_post('confirmationText'),
+  	'errorText' => pel_get_from_post('errorText'),
+  	'id' => pel_get_from_post('id'),
+  	'cvv2' => pel_get_from_post('cvv2'),
+  	'authNum' => pel_get_from_post('authNum'),	
+  	'shopNo' => pel_get_from_post('shopNo'),
+  	'frmAction' => pel_get_from_post('frmAction'),
+  	'TokenForTerminal' => pel_get_from_post('TokenForTerminal'),
+  	'J5' => pel_get_from_post('J5'),
+  	'keepSSL' =>pel_get_from_post('keepSSL') ## NO TRAILING COMMA
+  );
+  foreach($payment_method['settings'] as $key=>$val){
+	if(!in_array($key,array("userName","password","activation_key")))
+		$data[$key]=$val;  
+  }
+ // $form['#token'] = FALSE;
+ // $form['noCheck'] =  array('#type' => 'hidden', '#value' => true);
+  /*
+  $order = commerce_order_load($_POST['out_trade_no']);
+  $payment_method = commerce_payment_method_instance_load($order->data['payment_method']); 
+  */   
+  global $language;
+  if($is_iframe){
+	$pelecard_url = 'https://gateway.pelecard.biz/Iframe';
+  }
+  else{
+	$pelecard_url = 'https://gateway.pelecard.biz/PayProcess';
+  }
+	
+  if(isset($payment_method['settings']['language'])&&$payment_method['settings']['language']!="he"&&
+     !($payment_method['settings']['language']=="auto"&&$language->language=="he")){
+     $pelecard_url .= '/english';    
+  }      
+  $notification = array("trade_no"=>$order->order_id,
+                        "total"=>$order->commerce_order_total[LANGUAGE_NONE][0]["amount"],
+                        "currency"=> $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'],
+                        "trade_status"=>"WAIT_BUYER_PAY");
+  if(commerce_pelecard_notify_validate($order, $payment_method,$notification)){
+  //  commerce_pelecard_notify_submit($order, $payment_method,$notification);    
+    foreach(array('logo','smallLogo','backgroundImage') as $img_field){
+		if(isset($theme_settings[$img_field])){
+			$file = file_load($theme_settings[$img_field]);
+			$theme_settings[$img_field] = file_create_url($file->uri);
+		}
+	}
+	if(isset($theme_settings['backgroundImage'])){
+		$theme_settings['backgroundImage'].=",".$theme_settings["backgroundImage_position"].",".$theme_settings["backgroundImage_repeat"];
+	}
+	unset($theme_settings["backgroundImage_repeat"],$theme_settings["backgroundImage_position"]);
+
+	foreach(array('hideParmx','hidePciDssLogo','hidePelecardLogo') as $cb_field){		
+		if(isset($theme_settings[$cb_field])&&$theme_settings[$cb_field]) $data[$cb_field] = "True";	
+	}
+    $new_data = pelecard_do_post_request($data+$payment_method['settings']);    
+    foreach($theme_settings as $th_key=>$th_val){
+		$new_data[$th_key] = $th_val;
+	}	
+	$sync_fields = variable_get("pelecard_sync_fields",array());
+	$payment_start_amount = $sync_fields['payments_start'];unset($sync_fields['payments_start']);
+	$maxPayments = $sync_fields['maxPayments'];unset($sync_fields['maxPayments']);
+	
+	foreach($sync_fields as $sync_dru=>$sync_com){
+		if(isset($customer->{$sync_dru}[LANGUAGE_NONE])){
+			$new_data[$sync_com] = $customer->{$sync_dru}[LANGUAGE_NONE][0]['value'];
+		}
+	}
+	/** payments fix start *****/
+	if($order->commerce_order_total[LANGUAGE_NONE][0]["amount"] >= $payment_start_amount*100){	
+		$new_data['maxPayments'] = $maxPayments;
+	}
+	else {
+		unset($new_data['maxPayments']);		
+	}
+	unset($new_data['minPaymentsNo']);
+	/*** broria fix end *******/
+
+    foreach ($new_data as $name => $value) {		
+      if (!empty($value)) {
+        $value = trim($value);
+        $form[$name] = array('#type' => 'hidden', '#value' => $value);
+      }
+    }  
+    $form['#action'] = $pelecard_url;               
+  }     
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Proceed payment with Pelecard'),
+    '#submit' => array('commerce_pelecard_redirect'),
+  );    
+  return $form;
+}    
+function commerce_pelecard_commerce_payment_method_info_alter(&$payment_methods) {
+ //var_dump($payment_methods);
+}
+/**
+ * Payment method callback: redirect form return validation.
+ */
+function commerce_pelecard_redirect_form_validate($order, $payment_method) {  
+  return commerce_pelecard_notify_validate($order, $payment_method, $_GET);
+}   
+/**
+ * Alipay notify validate
+ */
+function commerce_pelecard_notify_validate($order, $payment_method, $notify) {     
+  if (empty($notify)) {
+    return FALSE;
+  }  
+  return TRUE;
+}
+
+/**
+ * Alipay notify submit   
+ * $notify= array: remote_id ,refund_status ,trade_no , total , trade_status
+ */
+function commerce_pelecard_notify_submit($order, $payment_method, $notify) {
+  // If this is a prior authorization capture IPN for which we've already
+  // created a transaction...
+  $transactions = commerce_payment_transaction_load_multiple(array(), array('remote_id' => $notify["trade_no"]));
+  if (!empty($transactions)) {
+    // Load the prior IPN's transaction and update that with the capture values.
+    $transaction = reset($transactions);
+  }
+  else {
+    // Create a new payment transaction for the order.
+    $transaction = commerce_payment_transaction_new($payment_method['method_id'], $order->order_id);    
+  }
+  $transaction->amount = $notify['total'];//commerce_currency_decimal_to_amount($notify['total'],$notify['currency']/100);
+  $transaction->currency_code = $notify['currency'];      
+  $transaction->remote_id = $notify["trade_no"];
+  // Set the transaction's statuses based on the notify's trade_status.    
+  $transaction->remote_status = $notify['trade_status'];
+  $transaction->data['notify'] = $notify;   
+  if (isset($notify['refund_status'])) {
+    switch ($notify['refund_status']) {
+      case 'WAIT_SELLER_AGREE':
+      	$transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;
+      	$transaction->message = commerce_pelecard_status_message($notify['trade_status']);
+      	commerce_order_status_update($order, 'wait_seller_agree');
+  	  break;
+  			
+      case 'REFUND_SUCCESS':
+        $transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;
+    	  $transaction->message = commerce_pelecard_status_message($notify['trade_status']); 
+  	    commerce_order_status_update($order, 'refund_success');
+    	break;
+    }
+  } else {   
+    if(!isset($notify['msg'])){
+      	 $transaction->message = commerce_pelecard_status_message($notify['trade_status']);
+      	}
+      	else{
+          $transaction->message = $notify['msg'];
+        }
+    switch ($notify['trade_status']) {
+      case 'TRADE_CLOSED':
+      	$transaction->status = COMMERCE_PAYMENT_STATUS_FAILURE;        	
+      	commerce_order_status_update($order, 'canceled',FALSE,null,t('An Error Occured while trying to pay with Pelecard'));
+    	break;
+		
+      case 'WAIT_SELLER_SEND_GOODS':
+      	$transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;  
+      	commerce_order_status_update($order, 'wait_send_goods');
+    	break;
+			
+      case 'WAIT_BUYER_CONFIRM_GOODS':
+	      $transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;  
+	      commerce_order_status_update($order, 'wait_buyer_confirm');
+	    break;			
+			
+      case 'WAIT_BUYER_PAY':       
+    	$transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;    	 
+    	commerce_order_status_update($order, 'wait_buyer_pay',FALSE,null,t('Paying with Pelecard'));
+    	break;
+	  case 'WAITING_APROVAL':
+		$transaction->status = COMMERCE_PAYMENT_STATUS_PENDING;     
+      	commerce_order_status_update($order, 'processing',FALSE,null,t('Wait for Pelecard authentication'));
+	  break;
+      case 'TRADE_FINISHED':
+        $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;     
+      	commerce_order_status_update($order, 'completed');
+      	break;        	  
+      case 'TRADE_SUCCESS':
+    	 $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;   
+		 commerce_order_status_update($order, 'completed',FALSE,null,t('Payed with Pelecard'));
+      break;
+    }
+  }  
+  commerce_payment_transaction_save($transaction);
+  commerce_payment_redirect_pane_next_page($order);
+  watchdog('commerce_pelecard', 'Notify processed for Order @order_number with ID @trade_no.', array('@trade_no' => $notify["trade_no"], '@order_number' => $order->order_number), WATCHDOG_INFO);
+}
+     
+/**
+ * Returns an appropriate message.
+ */
+function commerce_pelecard_status_message($status) {
+  switch ($status) {
+    case 'WAIT_SELLER_AGREE':
+      return t('The refund request is waiting for seller to agree.');
+    case 'REFUND_SUCCESS':
+      return t('Seller agree on the refund request.');
+    case 'TRADE_CLOSED':
+      return t('The payment has failed. This happens only if the payment was made from your customer’s bank account.');
+    case 'WAIT_SELLER_SEND_GOODS':
+      return t('The payment is waiting seller to send goods.');
+    case 'WAIT_BUYER_CONFIRM_GOODS':
+      return t('seller has already sent the goods, wait buyer to confirm.');
+    case 'WAIT_BUYER_PAY':
+      return t('The payment is waiting buyer to pay.');
+    case 'TRADE_FINISHED':
+      return t('The payment has completed.');
+    case 'TRADE_SUCCESS':
+      return t('The payment has completed.');
+  }
+}
+
+/**
+ * hook_commerce_order_status_info().
+ */
+function commerce_pelecard_commerce_order_status_info() {
+  $order_statuses = array();
+
+  $order_statuses['wait_send_goods'] = array(
+    'name' => 'wait_send_goods',
+    'title' => t('Wait for seller to send goods'),
+    'state' => 'pending',
+  );
+  
+  $order_statuses['wait_buyer_pay'] = array(
+    'name' => 'wait_buyer_pay',
+    'title' => t('Wait for buyer to pay'),
+    'state' => 'pending',
+  );
+  
+  $order_statuses['wait_buyer_confirm'] = array(
+    'name' => 'wait_buyer_confirm',
+    'title' => t('Wait for buyer to confirm'),
+    'state' => 'pending',
+  );
+	
+  $order_statuses['wait_seller_agree'] = array(
+    'name' => 'wait_seller_agree',
+    'title' => t('Wait for seller to agree refund request.'),
+    'state' => 'pending',
+  );
+  
+  $order_statuses['refund_success'] = array(
+    'name' => 'refund_success',
+    'title' => t('Refund success. (Transaction canceled)'),
+    'state' => 'canceled',
+  );
+  
+  return $order_statuses;
+}
+/*
+*   # Submit the data into pelecard servers
+*/
+function pelecard_do_post_request($data, $optional_headers = null)	{    
+    $data['password'] = str_replace("+", "`9`", $data['password']);
+  	$data['password'] = str_replace("&", "`8`", $data['password']);
+	  $data['password'] = str_replace("%", "`7`", $data['password']);  
+		$params = array('http' => array(
+				'method' => 'POST',
+				'content' => http_build_query($data)
+				)); 
+
+		$url = 'https://gateway.pelecard.biz/PayProcess/english';       
+    
+		if ($optional_headers !== null) {
+			$params['http']['header'] = $optional_headers;
+		}
+		$ctx = stream_context_create($params);
+		$fp = @fopen($url, 'rb', false, $ctx);    
+ 
+
+	 $res = "";
+	 while (!feof($fp)){ 
+     $res .= fgets($fp, 512);       
+   } 
+  // $res = preg_replace("/<img[^>]+\>/i", "", $res);  
+   $data_out = array();
+   preg_match_all("/<input[^>]+\>/i",$res,$matches);    
+   foreach($matches[0] as $k=>$matche){      
+    preg_match('/name="(.*?)"/i',$matche,$name);
+    preg_match('/value="(.*?)"/i',$matche,$val);
+    if(isset($name[1])&&isset($val[1]))
+    $data_out[$name[1]]=$val[1]; 
+   }
+   return $data_out;
+}         

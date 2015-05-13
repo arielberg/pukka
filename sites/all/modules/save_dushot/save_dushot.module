@@ -1,0 +1,18 @@
+<?php
+
+
+function save_dushot_form_node_form_alter(&$form, &$form_state, $form_id) {
+  $node = $form['#node'];
+  if ($node->type == 'dushot_test') {
+    $form['actions']['submit']['#value'] = 'לקבלת תוצאות';
+  }
+}
+
+function save_dushot_init()
+{
+    global $user;
+    drupal_add_js(array('user_js_uid' => $user->uid), 'setting');
+}
+
+
+?>

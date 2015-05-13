@@ -1,0 +1,444 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
+    "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="he" version="XHTML+RDFa 1.0" dir="rtl"
+    
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/terms/"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:og="http://ogp.me/ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:sioc="http://rdfs.org/sioc/ns#"
+  xmlns:sioct="http://rdfs.org/sioc/types#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+<head profile="http://www.w3.org/1999/xhtml/vocab">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta property="og:description" content="בלוג" />
+<link rel="shortcut icon" href="http://185.18.205.244/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" />
+<!--[if lte IE 9]><script src="http://185.18.205.244sites/all/themes/md_boom_multi/js/onepage/html5.js" />
+</script><![endif]--><!--[if lte IE 9]><script src="http://185.18.205.244sites/all/themes/md_boom_multi/js/onepage/css3.mediaqueries.js" />
+</script><![endif]--><meta property="og:url" content="http://185.18.205.244/blog/phpmyadmin/scripts/setup.php" />
+<meta property="og:title" content="בלוג" />
+<meta name="generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="http://185.18.205.244/blog/phpmyadmin/scripts/setup.php" />
+<link rel="shortlink" href="http://185.18.205.244/blog/phpmyadmin/scripts/setup.php" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="פוקה" />
+    <title>בלוג | פוקה</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_gIEJRF2pvPP_gR4w_sV64PBt_VnK6fCDjhUrzkU7Zwo.css" media="all" />
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_VtJXrw61BTQFjUSfawpEeQPQFY1qS98ywi-eDMXSVp4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_qbegkke_CFqHruPpLd-0XOKHUGud8-cyjadGiLFvvBo.css" media="all" />
+<style type="text/css" media="all">
+<!--/*--><![CDATA[/*><!--*/
+.md-layer-4-0-0 a{background:#e37474;border:8px solid #5c1123;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#730d08 !important;text-align:center;font-size:2.9166666666667em;font-family:Source Sans Pro;}.md-layer-4-0-0{z-index:999}.md-layer-4-1-0 a{background:#ed6d47;border:8px solid #802c12;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#4d1e08 !important;text-align:center;font-size:2.9166666666667em;font-family:Source Sans Pro;}.md-layer-4-1-0{z-index:999}.md-layer-4-1-1 a{background:#611a1a;border:8px solid #bd7964;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#cc753f !important;text-align:center;font-size:2.5em;font-family:Source Sans Pro;}.md-layer-4-1-1{z-index:1000}.md-layer-4-2-0 a{background:#4f0d0d;border:7px solid #d1544b;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#d16e50 !important;text-align:center;font-size:2.9166666666667em;}.md-layer-4-2-0{z-index:999}.md-layer-4-2-1 a{background:#f27b66;border:8px solid #451515;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#521a10 !important;text-align:center;font-size:2.5em;}.md-layer-4-2-1{z-index:1000}.md-layer-4-3-0 a{background:#613911;border:10px solid #c7a47f;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#ebcca7 !important;text-align:center;font-size:2.9166666666667em;}.md-layer-4-3-0{z-index:997}.md-layer-4-3-1 a{background:#cfa990;border:7px solid #804d2d;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#40311c !important;text-align:center;font-size:2.5em;}.md-layer-4-3-1{z-index:1000}.md-layer-4-4-0 a{background:#8032b8;border:7px solid #c885d9;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#c1a7d6 !important;text-align:center;font-size:2.9166666666667em;}.md-layer-4-4-0{z-index:998}.md-layer-4-4-1 a{background:#aa75c9;border:8px solid #5e185e;-webkit-border-top-left-radius:99px;-moz-border-radius-topleft:99px;border-top-left-radius:99px;-webkit-border-top-right-radius:99px;-moz-border-radius-topright:99px;border-top-right-radius:99px;-webkit-border-bottom-left-radius:99px;-moz-border-radius-bottomleft:99px;border-bottom-left-radius:99px;-webkit-border-bottom-right-radius:99px;-moz-border-radius-bottomright:99px;border-bottom-right-radius:99px;color:#570f57 !important;text-align:center;font-size:2.5em;}.md-layer-4-4-1{z-index:999}
+
+/*]]>*/-->
+</style>
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_nWSQE9MWA5tz4X82yOslr4XUawXQrdVRA2WqdFl0Qdo.css" media="all" />
+<style type="text/css" media="all">
+<!--/*--><![CDATA[/*><!--*/
+
+
+/*]]>*/-->
+</style>
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_Pspi2V-sjhxmpmbVGSYfdOclPWSs-qUyD1TQ5U7mxUw.css" media="all" />
+
+<!--[if IE 7]>
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_RE3hLE-wqQO2NK5O5piH7y1GoIflB4vuknXdCf-O1QE.css" media="all" />
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_E4JenEhyZQX-qYle5EUjUlccWf5GhZBvV675JXL_YiM.css" media="all" />
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800italic,800" media="all" />
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,300,300italic,200italic,400italic,600italic,600,700,700italic,900,900italic" media="all" />
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Pacifico" media="all" />
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_KGZcOm3i1wmtbgZsjo-3V9FM4wZ-5UDcpJ7Vfzmt45E.css" media="all" />
+
+<!--[if lt IE 9]>
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/all/themes/md_boom_multi/css/ie.css?n2dcgj" media="all" />
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/default/files/css/css_AbpHGcgLb-kRsJGnwFEktk7uzpZOCcBY74-YBdrKVGs.css" media="all" />
+
+<!--[if lte IE 7]>
+<link type="text/css" rel="stylesheet" href="http://185.18.205.244/sites/all/themes/md_boom_multi/css/ie7.css?n2dcgj" media="all" />
+<![endif]-->
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+window.jQuery || document.write("<script src='/profiles/md_boom_multipurpose/modules/jquery_update/replace/jquery/1.7/jquery.min.js'>\x3C/script>")
+//--><!]]>
+</script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_IkgOrrVZK1UTp2HktvFi5vo1g7b25Muyr5GoySikuic.js"></script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_ZcW7GPj-lBTdq14HzozaLfWfYQFXoVKaLwt0BJOAoQw.js"></script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_XhYdP9rIo9PaTNLNq87G0tQ2OjyP7o5R3SdvHipoRbQ.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function($) {
+      $(document).ready(function() {
+          effectsIn = Drupal.settings.inEffects;
+          effectsOut = Drupal.settings.outEffects;
+          var options = Drupal.settings.md_slider_options_4;
+          $("#md-slider-4").mdSlider(options);
+      });
+    })(jQuery);
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function($) {
+      $(document).ready(function() {
+          effectsIn = Drupal.settings.inEffects;
+          effectsOut = Drupal.settings.outEffects;
+          var options = Drupal.settings.md_slider_options_5;
+          $("#md-slider-5").mdSlider(options);
+      });
+    })(jQuery);
+//--><!]]>
+</script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_owe2rx7I3E-yU1LCUtRbuyooHSyDszJq0Zhzij5S5Hw.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+var _gaq = _gaq || [];_gaq.push(["_setAccount", "UA-48254181-1"]);_gaq.push(["_trackPageview"]);(function() {var ga = document.createElement("script");ga.type = "text/javascript";ga.async = true;ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(ga, s);})();
+//--><!]]>
+</script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_JYxX6Z0Z7jC8-goCoOzqjqgSbi28DdIosHTbSR6wIDY.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_RLzHAv4JIAxqOxudbvKxuFFTfdIQGLAIqalg_0CvdZY.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"md_boom_multi","theme_token":"4UOYWzb95zCHFpXdtWudC45YodQuLCocb4dD-JN11cc","js":{"profiles\/md_boom_multipurpose\/modules\/md_boom_multi_module\/js\/jquery.tweet.js":1,"profiles\/md_boom_multipurpose\/modules\/md_boom_multi_module\/js\/script.js":1,"http:\/\/ajax.aspnetcdn.com\/ajax\/jQuery\/jquery-1.7.1.min.js":1,"0":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/extlink\/extlink.js":1,"public:\/\/languages\/he_t0QR_D9i-Uf7PBjjPL1xv-wDF-jTJ2LjAE_RJ663FNw.js":1,"profiles\/md_boom_multipurpose\/modules\/panels\/js\/panels.js":1,"1":1,"2":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/js\/jquery.easing.js":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/js\/md-slider.js":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/js\/jquery.touchwipe.js":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/js\/mdvideobox.js":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/js\/modernizr.js":1,"sites\/all\/modules\/google_analytics\/googleanalytics.js":1,"3":1,"sites\/all\/themes\/md_boom_multi\/js\/bootstrap.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.cycle2.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.form.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.validate.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.carouFredSel-5.6.4.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.easing.1.3.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.iconmenu.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.flexslider-min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jflickrfeed.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/scroll-startstop.events.jquery.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.jscrollpane.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.prettyPhoto.js":1,"sites\/all\/themes\/md_boom_multi\/js\/countdown.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.isotope.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/styleswitch.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery-ui-1.8.22.custom.min.js":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.imagesloaded.min.js":1,"http:\/\/maps.googleapis.com\/maps\/api\/js?sensor=false":1,"sites\/all\/themes\/md_boom_multi\/js\/jquery.mousewheel.js":1,"sites\/all\/themes\/md_boom_multi\/js\/bigvideo.js":1,"sites\/all\/themes\/md_boom_multi\/js\/video.js":1,"sites\/all\/themes\/md_boom_multi\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.base-rtl.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.menus-rtl.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.messages-rtl.css":1,"modules\/system\/system.theme.css":1,"modules\/system\/system.theme-rtl.css":1,"modules\/comment\/comment.css":1,"modules\/comment\/comment-rtl.css":1,"sites\/all\/modules\/date\/date_api\/date.css":1,"sites\/all\/modules\/date\/date_api\/date-rtl.css":1,"sites\/all\/modules\/date\/date_popup\/themes\/datepicker.1.7.css":1,"modules\/field\/theme\/field.css":1,"modules\/field\/theme\/field-rtl.css":1,"modules\/node\/node.css":1,"modules\/search\/search.css":1,"modules\/search\/search-rtl.css":1,"modules\/user\/user.css":1,"modules\/user\/user-rtl.css":1,"sites\/all\/modules\/extlink\/extlink.css":1,"profiles\/md_boom_multipurpose\/modules\/views\/css\/views.css":1,"profiles\/md_boom_multipurpose\/modules\/views\/css\/views-rtl.css":1,"profiles\/md_boom_multipurpose\/modules\/ctools\/css\/ctools.css":1,"profiles\/md_boom_multipurpose\/modules\/panels\/css\/panels.css":1,"0":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/css\/md-slider.css":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/css\/animate.css":1,"1":1,"profiles\/md_boom_multipurpose\/modules\/md_slider\/css\/md-slider-style.css":1,"profiles\/md_boom_multipurpose\/modules\/fontello\/css\/fontello.fix.css":1,"public:\/\/icon\/fontello\/fontello\/css\/fontello.css":1,"public:\/\/icon\/fontello\/fontello\/css\/animation.css":1,"public:\/\/icon\/fontello\/fontello\/css\/fontello-ie7.css":1,"sites\/all\/themes\/md_boom_multi\/css\/bootstrap.css":1,"sites\/all\/themes\/md_boom_multi\/css\/flexslider.css":1,"sites\/all\/themes\/md_boom_multi\/css\/jquery.jscrollpane.codrops.css":1,"sites\/all\/themes\/md_boom_multi\/css\/prettyPhoto.css":1,"sites\/all\/themes\/md_boom_multi\/css\/isotope.css":1,"sites\/all\/themes\/md_boom_multi\/css\/stimenu.css":1,"sites\/all\/themes\/md_boom_multi\/css\/drop-down.css":1,"sites\/all\/themes\/md_boom_multi\/css\/bigvideo.css":1,"sites\/all\/themes\/md_boom_multi\/css\/style.css":1,"sites\/all\/themes\/md_boom_multi\/css\/pukka.css":1,"sites\/all\/themes\/md_boom_multi\/css\/bootstrap-responsive.min.css":1,"sites\/all\/themes\/md_boom_multi\/css\/responsive.css":1,"http:\/\/fonts.googleapis.com\/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800italic,800":1,"http:\/\/fonts.googleapis.com\/css?family=Source+Sans+Pro:400,200,300,300italic,200italic,400italic,600italic,600,700,700italic,900,900italic":1,"http:\/\/fonts.googleapis.com\/css?family=Pacifico":1,"sites\/all\/libraries\/superfish\/css\/superfish.css":1,"sites\/all\/themes\/md_boom_multi\/css\/ie.css":1,"sites\/all\/themes\/md_boom_multi\/css\/colors\/default.css":1,"sites\/all\/themes\/md_boom_multi\/css\/ie7.css":1}},"inEffects":["bounceIn","bounceInDown","bounceInUp","bounceInLeft","bounceInRight","fadeIn","fadeInUp","fadeInDown","fadeInLeft","fadeInRight","fadeInUpBig","fadeInDownBig","fadeInLeftBig","fadeInRightBig","flipInX","flipInY","foolishIn","lightSpeedIn","puffIn","rollIn","rotateIn","rotateInDownLeft","rotateInDownRight","rotateInUpLeft","rotateInUpRight","twisterInDown","twisterInUp","swap","swashIn","tinRightIn","tinLeftIn","tinUpIn","tinDownIn","vanishIn","bounceIn","bounceInDown","bounceInUp","bounceInLeft","bounceInRight","fadeIn","fadeInUp","fadeInDown","fadeInLeft","fadeInRight","fadeInUpBig","fadeInDownBig","fadeInLeftBig","fadeInRightBig","flipInX","flipInY","foolishIn","lightSpeedIn","puffIn","rollIn","rotateIn","rotateInDownLeft","rotateInDownRight","rotateInUpLeft","rotateInUpRight","twisterInDown","twisterInUp","swap","swashIn","tinRightIn","tinLeftIn","tinUpIn","tinDownIn","vanishIn"],"outEffects":["bombRightOut","bombLeftOut","bounceOut","bounceOutDown","bounceOutUp","bounceOutLeft","bounceOutRight","fadeOut","fadeOutUp","fadeOutDown","fadeOutLeft","fadeOutRight","fadeOutUpBig","fadeOutDownBig","fadeOutLeftBig","fadeOutRightBig","flipOutX","flipOutY","foolishOut","hinge","holeOut","lightSpeedOut","puffOut","rollOut","rotateOut","rotateOutDownLeft","rotateOutDownRight","rotateOutUpLeft","rotateOutUpRight","rotateDown","rotateUp","rotateLeft","rotateRight","swashOut","tinRightOut","tinLeftOut","tinUpOut","tinDownOut","vanishOut","bombRightOut","bombLeftOut","bounceOut","bounceOutDown","bounceOutUp","bounceOutLeft","bounceOutRight","fadeOut","fadeOutUp","fadeOutDown","fadeOutLeft","fadeOutRight","fadeOutUpBig","fadeOutDownBig","fadeOutLeftBig","fadeOutRightBig","flipOutX","flipOutY","foolishOut","hinge","holeOut","lightSpeedOut","puffOut","rollOut","rotateOut","rotateOutDownLeft","rotateOutDownRight","rotateOutUpLeft","rotateOutUpRight","rotateDown","rotateUp","rotateLeft","rotateRight","swashOut","tinRightOut","tinLeftOut","tinUpOut","tinDownOut","vanishOut"],"md_slider_options_4":{"fullwidth":true,"transitionsSpeed":"1000","width":"1170","height":"570","enableDrag":true,"responsive":true,"loop":true,"showLoading":true,"loadingPosition":"bottom","showArrow":true,"showBullet":true,"posBullet":"2","showThumb":false,"posThumb":"1","slideShowDelay":"8000","slideShow":true,"styleBorder":"0","styleShadow":"0","videoBox":false},"md_slider_options_5":{"fullwidth":false,"transitionsSpeed":"800","width":"980","height":"450","enableDrag":true,"responsive":true,"loop":true,"showLoading":true,"loadingPosition":"bottom","showArrow":true,"showBullet":false,"posBullet":"5","showThumb":true,"posThumb":"1","slideShowDelay":"8000","slideShow":true,"styleBorder":"0","styleShadow":"0","videoBox":false},"extlink":{"extTarget":"_blank","extClass":0,"extSubdomains":1,"extExclude":"","extInclude":"","extCssExclude":"","extCssExplicit":"","extAlert":0,"extAlertText":"This link will take you to an external web site.","mailtoClass":0},"googleanalytics":{"trackOutbound":1,"trackMailto":1,"trackDownload":1,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls|xml|z|zip"},"twitter_account":"megadrupal","twitter_num":"2","flickrID":"92032055@N03","flickrNum":"6","sitesLayout":"wide","headerStyle":"header3","widgetStyle":"w-style1","sitesSkin":"default"});
+//--><!]]>
+</script>
+    <link rel="stylesheet" href="/sites/all/themes/md_boom_multi/css/colors/default.css" type="text/css" id="colors" />
+    <style type="text/css">
+                body {background-image:none; background-color:#ffffff}        a:link, #node-title a {}
+a:hover, #node-title a:hover {}
+a:visited, #node-title a:visited {}
+a:focus, a:active, #node-title a:focus, #node-title a:active {}
+
+            </style>
+    <!-- Style
+               ================================================== -->
+
+
+    </head>
+<body class="
+ sub-page pf-list-style   left-sidebar "
+     >
+
+
+<div class="flx-wrapper">
+    <header id="flx-header" class="head-s3 clearfix">
+                                <div class="wrapper tophead clearfix">
+                                <div id="flx-logo">
+                    <a href="http://185.18.205.244"><img src="http://185.18.205.244/sites/default/files/logoo.png" alt="" /></a>                </div><!--end:flx-logo-->
+                                    <!-- <div class="socials">
+                        <a href="http://www.facebook.com/pukkaisrael" target="_blank"><i class="icon-facebook icon-2x"></i></a>                        <a href="http://twitter.com/zipim" target="_blank"><i class="icon-twitter icon-2x"></i></a>                        <a href="http://www.pinterest.com/pukkaist" target="_blank"><i class="icon-pinterest-circled icon-2x"></i></a>                        <a href="http://dribbble.com" target="_blank"><i class="icon-linkedin icon-2x"></i></a>                        <a href="http://plus.google.com" target="_blank"><i class="icon-gplus icon-2x"></i></a>                        <a href="" target="_blank"><i class="icon-skype icon-2x"></i></a>                        <a href="http://www.youtube.com/user/pukkaherbs" target="_blank"><i class="icon-youtube icon-2x"></i></a>                        <a href="http://linkedin.com" target="_blank"><i class="icon-dribbble icon-2x"></i></a>
+                    </div> -->
+                                    <ul class="menu clearfix"><li class="first leaf"><a href="/cart" title=""><i class="icon fontello icon-basket" aria-hidden="true"></i>סל קניות</a></li>
+<li class="leaf"><a href="/user/register" title="">הירשם</a></li>
+<li class="last leaf"><a href="/user/login" title="">התחבר</a></li>
+</ul>
+                                                                    <div id="block-search-form" class="block block-search">
+            
+    <form onsubmit="if(this.search_block_form.value==&#039;Search&#039;){ alert(&#039;Please enter a search&#039;); return false; }" action="/blog/phpmyadmin/scripts/setup.php" method="post" id="search-block-form" accept-charset="UTF-8"><div><div class="container-inline">
+      <h2>חיפוש</h2>
+    <div class="form-item form-type-textfield form-item-search-block-form">
+ <input title="הנושאים שברצונך לחפש." class="search-query form-text" type="text" id="edit-search-block-form--2" name="search_block_form" value="" size="40" maxlength="128" />
+</div>
+<div class="form-actions form-wrapper" id="edit-actions"><input class="front-search-button form-submit" type="image" id="edit-submit" name="submit" value="" src="/sites/all/themes/md_boom_multi/images/icons/search-icon-top.png" /></div><input type="hidden" name="form_build_id" value="form-TqYb4mN2cOVh36Un63_8fDJtJx4geYURtQwn2DKg8_4" />
+<input type="hidden" name="form_id" value="search_block_form" />
+</div>
+</div></form></div>                                                                                </div>
+        
+            <nav id="main-nav">
+                                <div class="wrapper clearfix">
+                                            <div id="block-superfish-1" class="block block-superfish">
+            
+    <ul id="superfish-1" class="menu sf-menu sf-main-menu sf-horizontal sf-style-none sf-total-items-7 sf-parent-items-3 sf-single-items-4 main-menu rtl"><li id="menu-221-1" class="first odd sf-item-1 sf-depth-1 sf-no-children"><a href="/" title="" class="sf-depth-1"><i class="icon fontello icon-home" aria-hidden="true"></i>דף הבית</a></li><li id="menu-317-1" class="active-trail middle even sf-item-2 sf-depth-1 sf-total-children-8 sf-parent-children-0 sf-single-children-8 menuparent"><span title="" class="sf-depth-1 menuparent nolink"><i class="icon fontello icon-cog" aria-hidden="true"></i>אודות</span><ul><li id="menu-1139-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="/%D7%90%D7%95%D7%93%D7%95%D7%AA%D7%99" class="sf-depth-2">אודותי</a></li><li id="menu-1871-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="/%D7%A0%D7%91%D7%99%D7%98%D7%90%D7%A1-%D7%A0%D7%98%D7%95%D7%A8%D7%9C%D7%A1" class="sf-depth-2">נביטאס נטורלס</a></li><li id="menu-1146-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="/%D7%A4%D7%95%D7%A7%D7%94" class="sf-depth-2">פוקה</a></li><li id="menu-1870-1" class="middle even sf-item-4 sf-depth-2 sf-no-children"><a href="/blog-dr-eliaz" class="sf-depth-2">הבלוג של ד&quot;ר אליעז</a></li><li id="menu-336-1" class="middle odd sf-item-5 sf-depth-2 sf-no-children"><a href="/about_us" title="" class="sf-depth-2">החברים שלנו</a></li><li id="menu-1855-1" class="active-trail middle even sf-item-6 sf-depth-2 sf-no-children"><a href="/blog" title="" class="sf-depth-2">בלוג</a></li><li id="menu-1142-1" class="middle odd sf-item-7 sf-depth-2 sf-no-children"><a href="/%D7%9B%D7%A9%D7%A8%D7%95%D7%AA" class="sf-depth-2">כשרות</a></li><li id="menu-1144-1" class="last even sf-item-8 sf-depth-2 sf-no-children"><a href="/%D7%97%D7%A0%D7%95%D7%99%D7%95%D7%AA" class="sf-depth-2">חנויות</a></li></ul></li><li id="menu-561-1" class="middle odd sf-item-3 sf-depth-1 sf-total-children-8 sf-parent-children-0 sf-single-children-8 menuparent"><span title="" class="sf-depth-1 menuparent nolink"><i class="icon fontello icon-basket" aria-hidden="true"></i>מוצרים</span><ul><li id="menu-1147-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A0%D7%91%D7%99%D7%98%D7%90%D7%A1-%D7%A0%D7%98%D7%95%D7%A8%D7%9C%D7%A1" title="" class="sf-depth-2">נביטאס נטורלס</a></li><li id="menu-1148-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%97%D7%9C%D7%99%D7%98%D7%95%D7%AA-%D7%A6%D7%9E%D7%97%D7%99%D7%9D" title="" class="sf-depth-2">חליטות צמחים</a></li><li id="menu-1149-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A1%D7%95%D7%A4%D7%A8%D7%A4%D7%95%D7%93" title="" class="sf-depth-2">סופרפוד</a></li><li id="menu-1150-1" class="middle even sf-item-4 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%90%D7%93%D7%A4%D7%98%D7%95%D7%92%D7%A0%D7%99%D7%9D" title="" class="sf-depth-2">אדפטוגנים</a></li><li id="menu-1151-1" class="middle odd sf-item-5 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A6%D7%9E%D7%97%D7%99%D7%9D-%D7%90%D7%99%D7%95%D7%A8%D7%95%D7%95%D7%93%D7%99%D7%99%D7%9D" title="" class="sf-depth-2">צמחים איורוודיים</a></li><li id="menu-1153-1" class="middle even sf-item-6 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%9E%D7%95%D7%A6%D7%A8%D7%99-%D7%93%D7%A8-%D7%90%D7%99%D7%99%D7%96%D7%99%D7%A7-%D7%90%D7%9C%D7%99%D7%A2%D7%96" title="" class="sf-depth-2">מוצרי ד&quot;ר אייזיק אליעז</a></li><li id="menu-1154-1" class="middle odd sf-item-7 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%9E%D7%96%D7%95%D7%9F-%D7%91%D7%A8%D7%99%D7%90-%D7%95%D7%A9%D7%9E%D7%A0%D7%99%D7%9D-%D7%98%D7%99%D7%A4%D7%95%D7%9C%D7%99%D7%99%D7%9D" title="" class="sf-depth-2">מזון בריא ושמנים טיפוליים</a></li><li id="menu-1155-1" class="last even sf-item-8 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A2%D7%A8%D7%9B%D7%95%D7%AA-%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA" title="" class="sf-depth-2">ערכות בריאות</a></li></ul></li><li id="menu-1600-1" class="middle even sf-item-4 sf-depth-1 sf-total-children-7 sf-parent-children-0 sf-single-children-7 menuparent"><span title="" class="sf-depth-1 menuparent nolink"><i class="icon fontello icon-book" aria-hidden="true"></i>מידע מקצועי</span><ul><li id="menu-1584-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="/sport" class="sf-depth-2">ספורט</a></li><li id="menu-1598-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="/%D7%90%D7%A8%D7%95%D7%A2%D7%99%D7%9D" class="sf-depth-2">ארועים</a></li><li id="menu-1591-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="/%D7%9B%D7%AA%D7%91%D7%95%D7%AA" class="sf-depth-2">כתבות</a></li><li id="menu-1592-1" class="middle even sf-item-4 sf-depth-2 sf-no-children"><a href="/%D7%9E%D7%A6%D7%92%D7%95%D7%AA" class="sf-depth-2">מצגות</a></li><li id="menu-1596-1" class="middle odd sf-item-5 sf-depth-2 sf-no-children"><a href="/%D7%A0%D7%99%D7%95%D7%96%D7%9C%D7%98%D7%A8%D7%99%D7%9D" class="sf-depth-2">ניוזלטרים</a></li><li id="menu-1594-1" class="middle even sf-item-6 sf-depth-2 sf-no-children"><a href="/%D7%A1%D7%99%D7%9E%D7%A4%D7%98%D7%95%D7%9E%D7%99%D7%9D" class="sf-depth-2">סימפטומים</a></li><li id="menu-1590-1" class="last odd sf-item-7 sf-depth-2 sf-no-children"><a href="/%D7%A9%D7%90%D7%9C%D7%95%D7%AA-%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA" class="sf-depth-2">שאלות ותשובות</a></li></ul></li><li id="menu-1586-1" class="middle odd sf-item-5 sf-depth-1 sf-no-children"><a href="/recipe" title="" class="sf-depth-1"><i class="icon fontello icon-food" aria-hidden="true"></i>מתכונים</a></li><li id="menu-1130-1" class="middle even sf-item-6 sf-depth-1 sf-no-children"><a href="/%D7%94%D7%98%D7%91%D7%95%D7%AA-%D7%9C%D7%97%D7%91%D7%A8%D7%99-%D7%9E%D7%95%D7%A2%D7%93%D7%95%D7%9F-%D7%9C%D7%A7%D7%95%D7%97%D7%95%D7%AA" class="sf-depth-1"><i class="icon fontello icon-user" aria-hidden="true"></i>מועדון לקוחות</a></li><li id="menu-332-1" class="last odd sf-item-7 sf-depth-1 sf-no-children"><a href="/contact" title="" class="sf-depth-1"><i class="icon fontello icon-comment" aria-hidden="true"></i>יצירת קשר</a></li></ul></div> 
+                                </div>
+                            </nav><!--end:main-nav-->
+            
+    </header><!--end:flx-header-->
+    
+    <!--<div class="header-title">-->
+        <div class="breadcrumb"><div class="wrapper"><a href="/">דף הבית</a> / <span class="custom-breadcrumbs-none">אודות</span> / בלוג</div></div>        <div class="wrapper">
+
+    <!--    </div>end:wrapper-->
+                    <div class="wrapper">
+        <div class="main-content clearfix">
+            <div class="row-fluid">
+                                                                        <div class="span3" id="left-sidebar">
+
+                                <div id="block-commerce-cart-cart" class="block block-commerce-cart">
+                <h2>סל הקניות שלי</h2>
+        
+    <div class="cart-empty-block">סל הקניות שלך ריק</div></div>                    </div>
+                                                                                            <div class="span9">
+                                <div id="block-system-main" class="block block-system">
+            
+        <div class="view view-blog view-id-blog view-display-id-page_blog2 view-dom-id-f0a3f5bf76374d6ebc352b432c09d45a">
+                                
+        
+                              <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98-%D7%A7%D7%99%D7%99%D7%9C-%D7%91%D7%A4%D7%A8%D7%99%D7%96">פרויקט קייל בפריז</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-author"><i class="icon-user"></i><a href="#"><a href="/%D7%9E%D7%97%D7%91%D7%A8%D7%99%D7%9D/%D7%A6%D7%99%D7%A4%D7%99-%D7%9E%D7%95%D7%A1%D7%A8%D7%99" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">ציפי מוסרי</a></a></span>
+                             <span class="flx-entry-date"><i class="icon-calendar"></i>07.03.2014</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p><a href="/post/%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98-%D7%A7%D7%99%D7%99%D7%9C-%D7%91%D7%A4%D7%A8%D7%99%D7%96"><img typeof="foaf:Image" src="http://185.18.205.244/sites/default/files/styles/blog__recipe__sport/public/iStock_000024515218Small.jpg?itok=if01m8Kl" width="728" height="342" /></a></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>העלאת המודעות לכרוב העל קייל בפריז</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+  <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%90%D7%95%D7%A0%D7%A7%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%94-%D7%90%D7%99%D7%A0%D7%98%D7%92%D7%A8%D7%98%D7%99%D7%91%D7%99%D7%AA">אונקולוגיה אינטגרטיבית</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-date"><i class="icon-calendar"></i>16.07.2013</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p><a href="/post/%D7%90%D7%95%D7%A0%D7%A7%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%94-%D7%90%D7%99%D7%A0%D7%98%D7%92%D7%A8%D7%98%D7%99%D7%91%D7%99%D7%AA"><img typeof="foaf:Image" src="http://185.18.205.244/sites/default/files/styles/blog__recipe__sport/public/iStock_000007252697_ExtraSmall.jpg?itok=iJF_aqGY" width="728" height="342" /></a></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>במהלך הכנת המפגש המקצועי לרופאים ומטפלים עם ד"ר אייזיק אליעז, נשאלתי מספר פעמים על הנושא : אונקולוגיה אינטגרטיבית. 
+יש לנו בארץ אונקולוגים קונבנציונאלים מוכשרים שמצליחים לאבחן ולייצר פרוטוקולים מדהימים ולהציל אנשים רבים ממחלת הסרטן , באמצעות כמותרפיה, הקרנות ותרופות ושיטות מקובלות, יש מספר מרכזים שמשלבים טיפולים כמותרפיים עם שיטות נוספות כמו היפרתרמיה, הזרקת ויטמין סי תוך ורידי,עירויים לחיזוק...</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+  <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%90%D7%9C-%D7%AA%D7%A1%D7%AA%D7%92%D7%A4%D7%95-%D7%AA%D7%94%D7%A0%D7%95">אל תסתגפו - תהנו !!</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-author"><i class="icon-user"></i><a href="#"><a href="/%D7%9E%D7%97%D7%91%D7%A8%D7%99%D7%9D/%D7%A6%D7%99%D7%A4%D7%99-%D7%9E%D7%95%D7%A1%D7%A8%D7%99" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">ציפי מוסרי</a></a></span>
+                             <span class="flx-entry-date"><i class="icon-calendar"></i>16.07.2013</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p><a href="/post/%D7%90%D7%9C-%D7%AA%D7%A1%D7%AA%D7%92%D7%A4%D7%95-%D7%AA%D7%94%D7%A0%D7%95"><img typeof="foaf:Image" src="http://185.18.205.244/sites/default/files/styles/blog__recipe__sport/public/iStock_000020638902Medium.jpg?itok=wv4-hwSS" width="728" height="342" /></a></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>שמחתי על שעת הכושר להגיב לכתבה שהתפרסמה היום בגלריה עיתון הארץ מאת רחל טל שיר :  במקום להתלהב מסופר פוד, תאכלו אבוקדו.
+אני מרגישה צורך לפרגן לכל מי ששותף לחגיגה חוצת הגבולות הזאת ששמה סופר פוד בתור אחת מחברות המפתח שמשווקות בארץ את הסופר פוד כבר מספר שנים, עם אלפי צרכנים מרוצים שמתקשרים כל יום להודות על השינוי שחל בחייהם, על סימפטומים עיקשים שנעלמו בעקבות השימוש ועל התמיכה בטרנספורמציה שעברו...</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+  <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%A8%D7%98%D7%98-%D7%A9%D7%9C-%D7%AA%D7%A7%D7%95%D7%94-%D7%95%D7%A9%D7%9C%D7%95%D7%9D-%D7%9E%D7%90%D7%99%D7%94-%D7%98%D7%99%D7%95%D7%95%D7%90%D7%A8%D7%99">רטט של תקוה ושלום- מאיה טיווארי</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-author"><i class="icon-user"></i><a href="#"><a href="/%D7%9E%D7%97%D7%91%D7%A8%D7%99%D7%9D/%D7%A6%D7%99%D7%A4%D7%99-%D7%9E%D7%95%D7%A1%D7%A8%D7%99" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">ציפי מוסרי</a></a></span>
+                             <span class="flx-entry-date"><i class="icon-calendar"></i>16.07.2013</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p><a href="/post/%D7%A8%D7%98%D7%98-%D7%A9%D7%9C-%D7%AA%D7%A7%D7%95%D7%94-%D7%95%D7%A9%D7%9C%D7%95%D7%9D-%D7%9E%D7%90%D7%99%D7%94-%D7%98%D7%99%D7%95%D7%95%D7%90%D7%A8%D7%99"><img typeof="foaf:Image" src="http://185.18.205.244/sites/default/files/styles/blog__recipe__sport/public/P4060219.JPG?itok=e0fzAxkT" width="728" height="342" /></a></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>מאיה טיווארי ידועה כמנהיגת השלום העולמי , מציינת בבלוג האחרון שלה את ארוע הרטט של תקווה ושלום אל פני כדור הארץ.
+מנהיגים של מסורות עתיקות כמו אבורג'ינים ושאמאנים, רישים וטאואיסטים נפגשו בפרת, אוסטרליה, כדי להתאחד בטקס וליצור את החלל הפנימי של שלום לכולם. יום הארוע השישי ביוני 2012 נבחר כיון שהוא מציין מעבר נדיר של ונוס על פני השמש. מכיון שהארוע נועד לטפח חזון של עולם חדש המבוסס על שלום ואהבה...</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+  <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%9C%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%94%D7%9E%D7%9C%D7%9B%D7%94-%D7%A9%D7%9C-%D7%90%D7%A0%D7%92%D7%9C%D7%99%D7%94">להרגיש המלכה של אנגליה</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-date"><i class="icon-calendar"></i>16.07.2013</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p><a href="/post/%D7%9C%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%94%D7%9E%D7%9C%D7%9B%D7%94-%D7%A9%D7%9C-%D7%90%D7%A0%D7%92%D7%9C%D7%99%D7%94"><img typeof="foaf:Image" src="http://185.18.205.244/sites/default/files/styles/blog__recipe__sport/public/539344_344404215645655_1025546641_n.jpg?itok=uy_NCE_I" width="728" height="342" /></a></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>ביוני האחרון ביקרנו בבריסטול , אנגליה וחגגנו עם "פוקה" יומולדת 10, היתה זאת הפעם הראשונה שחוויתי את העוצמה של הקאנטריסייד באנגליה וזאת בעזרתה האדיבה של רינה גולן, מורה ליוגה, מדיטציה, אוכל בריא , רו פוד איורוודה וניקוי רעלים.
+רינה גרה באחוזה אנגלית ישנה כזאת מהספרים של ג'ין אוסטין, בבית מהמם של שומר היער באחוזה , לוקח חצי שעה לחצות את האחוזה שמכילה בית ענק, יערות, סוסים, ערוגות אורגניות, כבשים...</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+  <div>
+    
+
+<div class="wrapper blog-wrapper">
+    <article class="flx-entry-item bs-2">
+            <h3 class="flx-entry-title" id="node-title"><span class="node-blog-title"><a href="/post/%D7%9E%D7%A0%D7%99%D7%98%D7%95%D7%91%D7%94-%D7%94%D7%A8%D7%91%D7%A1%D7%98-%D7%99%D7%A6%D7%A8%D7%A0%D7%99%D7%AA-%D7%A9%D7%9E%D7%9F-%D7%94%D7%94%D7%9E%D7%A4-%D7%94%D7%98%D7%95%D7%91-%D7%91%D7%A2%D7%95%D7%9C%D7%9D">מניטובה הרבסט- יצרנית שמן ההמפ הטוב בעולם</a></span></h3>
+            <div class="flx-entry-meta">
+                            <span class="flx-entry-date"><i class="icon-calendar"></i>16.07.2013</span>
+            </div><!--end:flx-entry-meta-->
+            <div class="flx-entry-thumb">
+                <p></p>
+
+            </div><!--end:flx-entry-thumb-->
+        <div class="flx-entry-content">
+            <div class="flx-entry-detail">
+                <p>חברת מניטובה הרבסט הקנדית מייצרת את שמן ההמפ המשובח של פוקה.
+היא מגדלת תחת פיקוח הממשלה ומשרד הבריאות הקנדי את צמחי הקנביס ומייצרת שמן באיכות עילאית.
+לקחתי מהם את הבלוג האחרון, על מנת לשתף אתכם במה שאני חווה , אין אחד שלא מדווח על נפלאות השמן וההמלצות והפידבקים רבים ומדהימים.
+" במניטובה הרבסט אנו לעתים קרובות מקבלים המלצות על היתרונות שהאנשים גילו משמן המפ בצריכה על בסיס קבוע. ההמלצות נעות בין...</p>
+                            </div><!--end:flx-entry-detail-->
+        </div><!--end:flx-entry-content-->
+    </article>
+                
+                                    </div>
+  </div>
+                <div class="pagination pagination-centered">
+                            <h2 class="element-invisible">עמודים</h2><div class="item-list"><ul class="pager"><li class="pager-current first">1</li>
+<li class="pager-item"><a title="עבור לעמוד 2" href="/blog/phpmyadmin/scripts/setup.php?page=1">2</a></li>
+<li class="pager-item"><a title="עבור לעמוד 3" href="/blog/phpmyadmin/scripts/setup.php?page=2">3</a></li>
+<li class="pager-item"><a title="עבור לעמוד 4" href="/blog/phpmyadmin/scripts/setup.php?page=3">4</a></li>
+<li class="pager-item"><a title="עבור לעמוד 5" href="/blog/phpmyadmin/scripts/setup.php?page=4">5</a></li>
+<li class="pager-item"><a title="עבור לעמוד 6" href="/blog/phpmyadmin/scripts/setup.php?page=5">6</a></li>
+<li class="pager-item"><a title="עבור לעמוד 7" href="/blog/phpmyadmin/scripts/setup.php?page=6">7</a></li>
+<li class="pager-item"><a title="עבור לעמוד 8" href="/blog/phpmyadmin/scripts/setup.php?page=7">8</a></li>
+<li class="pager-item"><a title="עבור לעמוד 9" href="/blog/phpmyadmin/scripts/setup.php?page=8">9</a></li>
+<li class="pager-next"><a title="לעמוד הבא" href="/blog/phpmyadmin/scripts/setup.php?page=1">לעמוד הבא ›</a></li>
+<li class="pager-last last"><a title="לעמוד האחרון" href="/blog/phpmyadmin/scripts/setup.php?page=8">לעמוד האחרון »</a></li>
+</ul></div>                    </div>
+
+        
+        
+        
+        
+    </div>
+
+
+
+
+
+</div>                    </div>
+                                                                                                    </div>
+            </div>
+    </div>
+    
+    </div>
+
+    <div class="page-bottom">
+            <div class="wrapper">
+                <div class="row-fluid">
+                    <center>
+                                                    <ul class="social-links clearfix">
+                                <li class="flx-twitter-icon"><a href="http://twitter.com/zipim" target="_blank"></a></li>                                <li class="flx-facebook-icon"><a href="http://www.facebook.com/pukkaisrael" target="_blank"></a></li>                                <li class="flx-youtube-icon"><a href="http://www.youtube.com/user/pukkaherbs" target="_blank"></a></li>                                <li class="flx-pinterest-icon"><a href="http://www.pinterest.com/pukkaist" target="_blank"></a></li>                            </ul>
+                                            </center>
+                    <center>
+                        <ul class="footer-menu"><li class="menu-318 first"><a href="/%D7%A9%D7%90%D7%9C%D7%95%D7%AA-%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA" title="">שאלות ותשובות</a></li>
+<li class="menu-316"><a href="/%D7%A1%D7%99%D7%9E%D7%A4%D7%98%D7%95%D7%9E%D7%99%D7%9D" title="">סימפטומים</a></li>
+<li class="menu-1588"><a href="/%D7%A0%D7%99%D7%95%D7%96%D7%9C%D7%98%D7%A8%D7%99%D7%9D" title="">ניוזלטרים</a></li>
+<li class="menu-1587"><a href="/%D7%9E%D7%A6%D7%92%D7%95%D7%AA" title="">מצגות</a></li>
+<li class="menu-311"><a href="/%D7%9B%D7%AA%D7%91%D7%95%D7%AA" title="">כתבות</a></li>
+<li class="menu-1973"><a href="/%D7%90%D7%A8%D7%95%D7%A2%D7%99%D7%9D" title="">אירועים</a></li>
+<li class="menu-1974 last"><a href="/sport" title="">ספורט</a></li>
+</ul>                    </center>
+                </div><!--end:row-fluid-->
+            </div><!--end:wrapper-->
+    </div><!--end:page-bottom-->
+    <footer id="flx-footer">
+        <div id="footer-top">
+            <div class="wrapper">
+                 <div class="row-fluid">
+                                <div id="block-md-boom-multi-module-footer-column-1" class="block block-md-boom-multi-module">
+                <h2>יצירת קשר</h2>
+        
+    <div class="span4">
+                <aside class="widget">
+                <h5 class="widget-title">יצירת קשר</h5>
+                <ul class="contact-info">
+                    <li><strong>טלפון</strong><span>:&nbsp;054-4563684</span></li>
+                    <li><strong>טלפון</strong><span>:&nbsp;052-6587525</span></li>
+                    להשיג את המוצרים בחנויות הטבע וברשתות האורגניות
+                </ul><!--end:contact-info-->
+                </aside><!--end:widget-->
+                </div><!--end:span4--></div>                                <div id="block-menu-menu-footer-column-2" class="block block-menu">
+                <h2>מוצרים</h2>
+        
+    <ul class="menu clearfix"><li class="first leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%90%D7%93%D7%A4%D7%98%D7%95%D7%92%D7%A0%D7%99%D7%9D" title="">אדפטוגנים</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%97%D7%9C%D7%99%D7%98%D7%95%D7%AA-%D7%A6%D7%9E%D7%97%D7%99%D7%9D" title="">חליטות צמחים</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%9E%D7%95%D7%A6%D7%A8%D7%99-%D7%93%D7%A8-%D7%90%D7%99%D7%99%D7%96%D7%99%D7%A7-%D7%90%D7%9C%D7%99%D7%A2%D7%96" title="">מוצרי ד&quot;ר אייזיק אליעז</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%9E%D7%96%D7%95%D7%9F-%D7%91%D7%A8%D7%99%D7%90-%D7%95%D7%A9%D7%9E%D7%A0%D7%99%D7%9D-%D7%98%D7%99%D7%A4%D7%95%D7%9C%D7%99%D7%99%D7%9D" title="">מזון בריא ושמנים טיפוליים</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A0%D7%91%D7%99%D7%98%D7%90%D7%A1-%D7%A0%D7%98%D7%95%D7%A8%D7%9C%D7%A1" title="">נביטאס נטורלס</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A1%D7%95%D7%A4%D7%A8%D7%A4%D7%95%D7%93" title="">סופרפוד</a></li>
+<li class="leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A2%D7%A8%D7%9B%D7%95%D7%AA-%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA" title="">ערכות בריאות</a></li>
+<li class="last leaf"><a href="/%D7%A1%D7%95%D7%92-%D7%9E%D7%95%D7%A6%D7%A8/%D7%A6%D7%9E%D7%97%D7%99%D7%9D-%D7%90%D7%99%D7%95%D7%A8%D7%95%D7%95%D7%93%D7%99%D7%99%D7%9D" title="">צמחים איורוודיים</a></li>
+</ul></div>                                <div id="block-menu-menu-footer-column-3" class="block block-menu">
+                <h2>תפריט ראשי</h2>
+        
+    <ul class="menu clearfix"><li class="first leaf"><a href="/%D7%90%D7%95%D7%93%D7%95%D7%AA%D7%99" title="">אודות</a></li>
+<li class="leaf"><a href="/recipe" title="">מתכונים</a></li>
+<li class="leaf active-trail"><a href="/blog" title="" class="active-trail active">בלוג</a></li>
+<li class="leaf"><a href="/%D7%94%D7%98%D7%91%D7%95%D7%AA-%D7%9C%D7%97%D7%91%D7%A8%D7%99-%D7%9E%D7%95%D7%A2%D7%93%D7%95%D7%9F-%D7%9C%D7%A7%D7%95%D7%97%D7%95%D7%AA" title="">מועדון לקוחות</a></li>
+<li class="leaf"><a href="/contact" title="">יצירת קשר</a></li>
+<li class="last leaf"><a href="/sitemap" title="">מפת אתר</a></li>
+</ul></div>                                <div id="block-block-1" class="block block-block">
+                <h2>מועדון לקוחות</h2>
+        
+    <p><aside class="widget"><br /><h5 class="widget-title">מועדון לקוחות</h5>
+<ul><li><i class="icon-angle-left"></i>5% הנחה קבועה ברכישת מוצרים דרך אתר החברה</li>
+<li><i class="icon-angle-left"></i>המוצרים מגיעים עד הבית מהיום למחר, מעל 700 ש"ח השליחות על חשבונינו</li>
+<li><i class="icon-angle-left"></i>הנחה לחברים בהשתתפות בסדנאות בישול עם השף ניר לוי</li>
+<li><i class="icon-angle-left"></i>הגרלות של מוצרי החברות פוקה ונביטאס ומוצרים נילווים כמו ויטמיקס</li>
+</ul><p></p></aside></p>
+</div><div id="block-block-4" class="block block-block">
+            
+    <p><span style="font-size:16px;"><a href="/user/register">הרשם עכשיו והצטרף למועדון</a></span></p>
+</div>                        <div class="clear"></div>
+                 </div><!--end:row-fluid-->
+            </div><!--end:wrapper-->
+        </div><!--end:footer-top-->
+        <div id="footer-bottom">
+            <div class="wrapper">
+                <div id="footer-logo">
+                    <a href=""><img src="http://185.18.205.244/sites/default/files/slogo.png" alt="" /></a>                </div><!--end:footer-logo-->
+                <center>
+                    <p id="copyright">@ כל הזכויות שמורות לפוקה ישראל 2014</br> <a href="http://tikke.co.il" target="_blank">Tikke - פיתוח אתרי אינטרנט</a></p>                </center>
+            </div><!--end:wrapper-->
+        </div><!--end:footer-bottom-->
+    </footer><!--end:flx-footer-->
+</div><!--end:flx-wrapper-->
+<p id="back-top"> <a href="#top">TOP</a> </p> <!--end:backtop-->
+<script type="text/javascript" src="http://185.18.205.244/sites/default/files/js/js_47Iki6OZJCRrvpoz03qyjAyni6XmqDodVohWNHKwoeQ.js"></script>
+</body>
+
+</html>
+
+<!-- Page cached by Boost @ 2014-03-14 10:48:51, expires @ 2014-03-14 11:48:51, lifetime שעה אחת -->

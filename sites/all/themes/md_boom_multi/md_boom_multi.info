@@ -1,0 +1,76 @@
+name = MD Boom Multi Theme
+description = Multipurpose Theme from MegaDrupal
+core = 7.x
+engine = phptemplate
+
+
+screenshot
+settings[toggle_logo] = 1
+settings[toggle_name] = 1
+settings[toggle_slogan] = 1
+settings[toggle_node_user_picture] = 1
+settings[toggle_comment_user_picture] = 1
+settings[toggle_comment_user_verification] = 1
+settings[toggle_favicon] = 1
+settings[toggle_main_menu] = 1
+settings[toggle_secondary_menu] = 1
+settings[default_logo] = 1
+settings[default_favicon] = 1
+settings[css3_textarea] = 0
+settings[webclip_precomp] = 1
+settings[twitter_account] = http://twitter.com
+settings[facebook_account] = http://facebook.com
+settings[skype_account] = http://skype.com
+settings[youtube_channel] = http://youtube.com
+settings[google+_account] = http://plus.google.com
+settings[dribbble_account] = http://dribbble.com
+settings[pinterest_account] = http://pinterest.com
+settings[linkedin_account] = http://linkedin.com
+settings[typo_heading_style_enable] = 0
+settings[nodetitle_enable] = 0
+settings[typo_view_title_enable] = 0
+settings[maintenance_message] = '<p><span>Our awesome website is</span> <br> Under construction </p>'
+settings[webform_title] = 'Getting in touch easy'
+settings[webform_description] = 'You need a talented digital marketing group. We work with brilliant clients. Sounds like a great fit. Complete this easy contact form, and let’s get together:'
+settings[sites_email] = 'Megadrupal@gmail.com'
+settings[address] = 'Ha Noi, Viet Nam'
+settings[phone] = '+84 123 456 789'
+settings[fax] = '+84 012 345 6789'
+settings[sites_description] = '<h5>Say Hello !</h5> <p>To find out more about what we can do for you, request some more examples of our work, or arrange a meeting, please dont hesitate to get in touch.</p>'
+settings[footer_text] = '<p id="copyright"> <strong>MD Boom Multipurpose</strong> - Designed by Felixplus - Drupal theme by <a href="http://megadrupal.com">MegaDrupal</a> </p> <p>All stock photos used on this Boom demo site are only for demo purposes and not included in the template package.</p>'
+settings[skins] = 'default'
+settings[header_style] = header1
+settings[widget_style] = w-style1
+settings[sidebar_position] = right
+settings[front_page] = home_mega_slider_1
+settings[sites_layout] = wide
+settings[choose_bg] = 0
+settings[choose_pattern] = 1
+settings[map_latlng] = 40.748395,-73.985542
+settings[map_types] = ROADMAP
+settings[map_zoom_level] = 17
+; Important Drupal regions
+regions[search] = Search
+
+regions[mega_slider_1] = Mega Slider 1
+regions[mega_slider_2] = Mega Slider 2
+regions[main_menu] = Main Menu
+
+regions[content] = Content
+
+regions[sidebar] = Sidebar
+
+regions[footer_col_1] = Footer Column 1
+
+regions[footer_col_2] = Footer Column 2
+
+regions[footer_col_3] = Footer Column 3
+
+regions[footer_col_4] = Footer Column 4
+
+regions[footer] = Footer
+
+project status url = http://updates.megadrupal.com/release-history
+version = "7.x-2.0"
+core = "7.x"
+project = "md_boom_multi"
