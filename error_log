@@ -1,3 +1,8 @@
 [23-Apr-2015 18:15:03 Europe/Helsinki] PHP Parse error:  syntax error, unexpected T_VARIABLE, expecting '(' in /home/boom/public_html/sites/all/themes/md_boom_multi/template/search-result.tpl.php on line 68
 [23-Apr-2015 18:15:46 Europe/Helsinki] PHP Parse error:  syntax error, unexpected T_VARIABLE, expecting '(' in /home/boom/public_html/sites/all/themes/md_boom_multi/template/search-result.tpl.php on line 68
 [23-Apr-2015 18:15:52 Europe/Helsinki] PHP Parse error:  syntax error, unexpected T_VARIABLE, expecting '(' in /home/boom/public_html/sites/all/themes/md_boom_multi/template/search-result.tpl.php on line 68
+[11-Jun-2015 09:57:23 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+[11-Jun-2015 10:01:18 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+[12-Jun-2015 10:13:47 Europe/Helsinki] PHP Fatal error:  Maximum execution time of 240 seconds exceeded in /home/boom/public_html/includes/database/database.inc on line 1473
+[13-Jun-2015 04:32:01 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+[14-Jun-2015 17:36:31 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0

@@ -36,8 +36,10 @@ if(isset($view->display[$current_display]->display_options['display_description'
             <p> <i class="icon-stethoscope"></i><?php if(theme_get_setting('fax')): print theme_get_setting('fax'); endif;?></p>-->
             <div class="text-contact">
                 <h4>נשמח לעמוד לשרותך ולענות לשאלות</h4></br>
-            בת חן נקטלוב ייעוץ מקצועי והדרכה 052-6587525</br>
-מורן אלברט הזמנות והמכירות 074-7020075  </br>
+             בת חן נקטלוב ייעוץ מקצועי, הדרכה והזמנות לפרטיים: 052-6587525</br>
+מורן אלברט תפעול ומשלוחים: 074-7020075  </br>
+רפי מוסרי: 0544563684</br>
+מענה טלפוני בימים א' - ה' בשעות 9:30-17:30</br>
 ניתן להשיג את מוצרי החברות שאנו מייצגים <a href="/node/199">בחנויות הטבע, בתי המרקחת והרשתות האורגניות</a>.</div>
         </div><!--end:contact-info-->
       <!--  <div id="map_canvas"><iframe width="728" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.co.il/maps?f=q&amp;source=s_q&amp;hl=iw&amp;geocode=&amp;q=%D7%9E%D7%95%D7%A8%D7%99%D7%94+42,+%D7%A8%D7%9E%D7%AA+%D7%92%D7%9F&amp;aq=0&amp;oq=%D7%9E%D7%95%D7%A8%D7%99%D7%94+42&amp;sll=31.87169,34.991326&amp;sspn=0.01917,0.042272&amp;ie=UTF8&amp;hq=&amp;hnear=%D7%9E%D7%95%D7%A8%D7%99%D7%94+42,+%D7%A8%D7%9E%D7%AA+%D7%92%D7%9F&amp;t=m&amp;ll=32.077266,34.822369&amp;spn=0.034909,0.040255&amp;z=14&amp;iwloc=A&amp;output=embed&iwloc=near“" style="background: #ffffff;"></iframe></div>-->
