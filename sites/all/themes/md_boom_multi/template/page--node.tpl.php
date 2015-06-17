@@ -59,7 +59,11 @@ $dribbble = theme_get_setting('linkedin_account');
                         <?php if(isset($dribbble)):?><a href="<?php print $dribbble;?>" target="_blank"><i class="icon-dribbble icon-2x"></i></a><?php endif;?>
 
                     </div> -->
-                                    <?php print drupal_render(menu_tree_output(menu_tree_all_data('user-menu'))); ?>
+                                    <?php
+										$mtree = menu_tree_all_data('user-menu');
+										$mtree_out = menu_tree_output($mtree);
+										print drupal_render($mtree_out); 
+									?>
 
                 <?php if($page['search']):?>
                     <?php if(theme_get_setting('header_style') == 'header2' || theme_get_setting('header_style') == 'header3'):?>
