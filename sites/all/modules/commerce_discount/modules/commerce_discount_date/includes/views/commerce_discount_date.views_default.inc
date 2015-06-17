@@ -11,6 +11,10 @@
  * Add start and end date to the discount overview.
  */
 function commerce_discount_date_views_default_views_alter(&$views) {
+  if (!isset($views['commerce_discount_overview'])) {
+    return NULL;
+  }
+
   $date_fields = _commerce_discount_date_views_get_view_delta();
 
   $view = &$views['commerce_discount_overview'];
@@ -19,7 +23,7 @@ function commerce_discount_date_views_default_views_alter(&$views) {
   // In order to insert the date fields in the middle of the fields array,
   // rebuild it while inserting the date fields after the 'rendered_entity'
   // field.
-  if (!is_array($handler->display->display_options['fields'])) {
+  if (empty($handler->display->display_options['fields']) || !is_array($handler->display->display_options['fields'])) {
     return;
   }
   foreach ($handler->display->display_options['fields'] as $field_id => $field) {

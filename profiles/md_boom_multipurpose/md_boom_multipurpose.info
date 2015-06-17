@@ -60,7 +60,6 @@ dependencies[] = md_boom_multi_module
 dependencies[] = md_boom_multipurpose_features
 dependencies[] = panels_mini
 dependencies[] = media
-dependencies[] = mediafield
 dependencies[] = md_slider
 dependencies[] = media_internet
 dependencies[] = media_soundcloud

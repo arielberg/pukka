@@ -38,14 +38,14 @@ function commerce_discount_schema() {
         'description' => 'The discount type (bundle).',
         'default' => '',
       ),
-      'enabled' => array(
+      'status' => array(
         'type' => 'int',
         'not null' => TRUE,
-        'default' => TRUE,
+        'default' => 1,
         'size' => 'tiny',
         'description' => 'Whether the discount is enabled.',
       ),
-      'status' => array(
+      'export_status' => array(
         'type' => 'int',
         'not null' => TRUE,
         // Set the default to ENTITY_CUSTOM without using the constant as it is
@@ -108,8 +108,8 @@ function commerce_discount_requirements($phase) {
   if ($phase == 'runtime') {
     if (!module_exists('inline_conditions')) {
       $requirements['inline_conditions'] = array(
-        'title' => $t('Inline conditions'),
-        'value' => $t('Inline conditions has to be installed.'),
+        'title' => $t('Inline Conditions'),
+        'value' => $t('Inline Conditions has to be installed.'),
         'severity' => REQUIREMENT_WARNING,
       );
     }
@@ -127,13 +127,18 @@ function commerce_discount_requirements($phase) {
  * The instance will be added for every newly created bundle.
  */
 function commerce_discount_install_helper() {
-  $fields = field_info_fields();
-  $instances = field_info_instances();
+  $fields = field_read_fields(array(), array('include_inactive' => TRUE));
   $field_types = field_info_field_types();
 
-  if (!isset($field_types['entityreference']) || !isset($field_types['inline_conditions'])) {
-    // Clear field info cache, so entity reference & inline_conditions field can
-    // be used.
+  // Clear field info cache, so entity reference, inline_conditions and
+  // commerce_product_reference field types can be used.
+  if (
+    !isset($field_types['entityreference'])
+    ||
+    !isset($field_types['inline_conditions'])
+    ||
+    !isset($field_types['commerce_product_reference'])
+  ) {
     field_info_cache_clear();
   }
 
@@ -156,6 +161,104 @@ function commerce_discount_install_helper() {
     );
     field_create_field($field);
   }
+  if (empty($fields['commerce_fixed_amount'])) {
+    // Add price field to the commerce discount offer "fixed_amount" bundle.
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_fixed_amount',
+      'type' => 'commerce_price',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+  }
+  if (empty($fields['commerce_percentage'])) {
+    // Add decimal field to the commerce discount offer "percentage" bundle.
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_percentage',
+      'type' => 'number_decimal',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+  }
+  if (empty($fields['commerce_discounts'])) {
+    $field = array(
+      'entity_types' => array('commerce_order'),
+      'settings' => array(
+        'handler' => 'base',
+        'target_type' => 'commerce_discount',
+        'handler_settings' => array(
+          'target_bundles' => array(),
+        ),
+      ),
+      'field_name' => 'commerce_discounts',
+      'type' => 'entityreference',
+      'locked' => FALSE,
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+    );
+    field_create_field($field);
+  }
+  if (empty($fields['inline_conditions']) && isset($field_types['inline_conditions'])) {
+    $field = array(
+      'entity_types'      => array('commerce_discount'),
+      'field_name'        => 'inline_conditions',
+      'type'              => 'inline_conditions',
+      'instance_settings' => array('entity_type' => 'commerce_order'),
+      'cardinality'       => FIELD_CARDINALITY_UNLIMITED,
+    );
+    field_create_field($field);
+  }
+  // Creating field for free shipping offer type.
+  if (module_exists('commerce_shipping') && empty($fields['commerce_free_shipping'])) {
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_free_shipping',
+      'type' => 'text',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+  }
+  // Creating field for percent off of shipping
+  if (module_exists('commerce_shipping') && empty($fields['commerce_percent_off_shipping'])) {
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_percent_off_shipping',
+      'type' => 'number_decimal',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+  }
+  // Creating field for percent off of shipping
+  if (module_exists('commerce_shipping') && empty($fields['commerce_percent_off_ship_serv'])) {
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_percent_off_ship_serv',
+      'type' => 'text',
+      'locked' => TRUE,
+    );
+    field_create_field($field);
+  }
+
+  // Creating field for free products offer type.
+  if (empty($fields['commerce_free_products']) && isset($field_types['commerce_product_reference'])) {
+    $field = array(
+      'entity_types' => array('commerce_discount_offer'),
+      'field_name' => 'commerce_free_products',
+      'type' => 'commerce_product_reference',
+      'locked' => TRUE,
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+    );
+    field_create_field($field);
+  }
+
+  // Make any existing-but-inactive fields active, and clear the cache to get
+  // instances for those fields.
+  field_sync_field_status();
+  field_info_cache_clear();
+
+  // Create instances for above fields.
+  $instances = field_info_instances();
+
   foreach (commerce_discount_types() as $type => $value) {
     if (empty($instances['commerce_discount'][$type]['commerce_discount_offer'])) {
       $instance = array(
@@ -173,17 +276,6 @@ function commerce_discount_install_helper() {
       field_create_instance($instance);
     }
   }
-
-  if (empty($fields['commerce_fixed_amount'])) {
-    // Add price field to the commerce discount offer "fixed_amount" bundle.
-    $field = array(
-      'entity_types' => array('commerce_discount_offer'),
-      'field_name' => 'commerce_fixed_amount',
-      'type' => 'commerce_price',
-      'locked' => TRUE,
-    );
-    field_create_field($field);
-  }
   if (empty($instances['commerce_discount_offer']['fixed_amount']['commerce_fixed_amount'])) {
     $instance = array(
       'field_name' => 'commerce_fixed_amount',
@@ -194,45 +286,18 @@ function commerce_discount_install_helper() {
     );
     field_create_instance($instance);
   }
-
-  if (empty($fields['commerce_percentage'])) {
-    // Add decimal field to the commerce discount offer "percentage" bundle.
-    $field = array(
-      'entity_types' => array('commerce_discount_offer'),
-      'field_name' => 'commerce_percentage',
-      'type' => 'number_decimal',
-      'locked' => TRUE,
-    );
-    field_create_field($field);
-  }
   if (empty($instances['commerce_discount_offer']['percentage']['commerce_percentage'])) {
     $instance = array(
       'field_name' => 'commerce_percentage',
       'entity_type' => 'commerce_discount_offer',
       'bundle' => 'percentage',
       'label' => t('Percentage'),
-      'description' => t('The percentage used to calculate this tax expressed as a decimal, e.g. .06 for a rate of 6%.'),
+      'settings' => array(
+        'suffix' => '%',
+      ),
       'required' => TRUE,
     );
     field_create_instance($instance);
-  }
-
-  if (empty($fields['commerce_discounts'])) {
-    $field = array(
-      'entity_types' => array('commerce_order'),
-      'settings' => array(
-        'handler' => 'base',
-        'target_type' => 'commerce_discount',
-        'handler_settings' => array(
-          'target_bundles' => array(),
-        ),
-      ),
-      'field_name' => 'commerce_discounts',
-      'type' => 'entityreference',
-      'locked' => TRUE,
-      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
-    );
-    field_create_field($field);
   }
   if (empty($instances['commerce_order']['commerce_order']['commerce_discounts'])) {
     $instance = array(
@@ -242,17 +307,6 @@ function commerce_discount_install_helper() {
       'label' => t('Discount reference'),
     );
     field_create_instance($instance);
-  }
-
-  if (empty($fields['inline_conditions']) && isset($field_types['inline_conditions'])) {
-    $field = array(
-      'entity_types'      => array('commerce_discount'),
-      'field_name'        => 'inline_conditions',
-      'type'              => 'inline_conditions',
-      'instance_settings' => array('entity_type' => 'commerce_order'),
-      'cardinality'       => FIELD_CARDINALITY_UNLIMITED,
-    );
-    field_create_field($field);
   }
   foreach (commerce_discount_types() as $type => $value) {
     if (empty($instances['commerce_discount'][$type]['inline_conditions']) && isset($field_types['inline_conditions'])) {
@@ -273,17 +327,6 @@ function commerce_discount_install_helper() {
       field_create_instance($instance);
     }
   }
-
-  // Creating field and its instance for free shipping offer type.
-  if (module_exists('commerce_shipping') && empty($fields['commerce_free_shipping'])) {
-    $field = array(
-      'entity_types' => array('commerce_discount_offer'),
-      'field_name' => 'commerce_free_shipping',
-      'type' => 'text',
-      'locked' => TRUE,
-    );
-    field_create_field($field);
-  }
   if (module_exists('commerce_shipping') && empty($instances['commerce_discount_offer']['free_shipping']['commerce_free_shipping'])) {
     $instance = array(
       'field_name' => 'commerce_free_shipping',
@@ -298,17 +341,33 @@ function commerce_discount_install_helper() {
     field_create_instance($instance);
   }
 
-  // Creating field and its instance for free products offer type.
-  if (empty($fields['commerce_free_products'])) {
-    $field = array(
-      'entity_types' => array('commerce_discount_offer'),
-      'field_name' => 'commerce_free_products',
-      'type' => 'commerce_product_reference',
-      'locked' => TRUE,
-      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+  if (module_exists('commerce_shipping') && empty($instances['commerce_discount_offer']['percent_off_shipping']['commerce_percent_off_shipping'])) {
+    // Add decimal selection
+    $instance = array(
+      'field_name' => 'commerce_percent_off_shipping',
+      'entity_type' => 'commerce_discount_offer',
+      'bundle' => 'percent_off_shipping',
+      'label' => t('Percentage off of shipping'),
+      'settings' => array(
+        'suffix' => '%',
+      ),
+      'required' => TRUE,
     );
-    field_create_field($field);
-}
+    field_create_instance($instance);
+
+    // Add service selection
+    $instance = array(
+      'field_name' => 'commerce_percent_off_ship_serv',
+      'entity_type' => 'commerce_discount_offer',
+      'bundle' => 'percent_off_shipping',
+      'label' => t('Shipping service to take % off shipping'),
+      'widget' => array(
+        'type' => 'options_select',
+      ),
+    );
+    field_create_instance($instance);
+  }
+
   if (empty($instances['commerce_discount_offer']['free_products']['commerce_free_products'])) {
     $instance = array(
       'field_name' => 'commerce_free_products',
@@ -335,20 +394,38 @@ function commerce_discount_install_helper() {
  * @see commerce_discount_offer_type_info()
  */
 function commerce_discount_uninstall() {
+  // Drop all bundles attached on commerce_discount and commerce_discount_offer
+  // entity types.
   field_attach_delete_bundle('commerce_discount', 'order_discount');
   field_attach_delete_bundle('commerce_discount', 'product_discount');
   field_attach_delete_bundle('commerce_discount_offer', 'fixed_amount');
   field_attach_delete_bundle('commerce_discount_offer', 'percentage');
   field_attach_delete_bundle('commerce_discount_offer', 'free_shipping');
+  field_attach_delete_bundle('commerce_discount_offer', 'commerce_percent_off_shipping');
+  field_attach_delete_bundle('commerce_discount_offer', 'commerce_percent_off_ship_serv');
   field_attach_delete_bundle('commerce_discount_offer', 'free_products');
 
+  // Then delete the related fields
   commerce_delete_field('commerce_discount_offer');
   commerce_delete_field('commerce_fixed_amount');
   commerce_delete_field('commerce_percentage');
   commerce_delete_field('commerce_discounts');
   commerce_delete_field('inline_conditions');
   commerce_delete_field('commerce_free_shipping');
+  commerce_delete_field('commerce_percent_off_shipping');
+  commerce_delete_field('commerce_percent_off_ship_serv');
   commerce_delete_field('commerce_free_products');
+
+  // Delete all rules added by commerce_discount module.
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'rules_config')
+    ->propertyCondition('module', 'commerce_discount')
+    ->execute();
+
+  if (!empty($result)) {
+    rules_config_delete(array_keys(reset($result)));
+  }
 
   // Delete variable settings.
   variable_del('commerce_discount_line_item_types');
@@ -384,4 +461,15 @@ function commerce_discount_update_7102() {
  */
 function commerce_discount_update_7103() {
   commerce_line_item_configure_line_item_fields(array('commerce_discount'));
+}
+
+/**
+ * #1854108 Changes to commerce_discount schema.
+ */
+function commerce_discount_update_7104() {
+  // Rename "enabled" to "status" and "status" to "export_status".
+  db_change_field('commerce_discount', 'status', 'export_status', array('type' => 'int', 'not null' => TRUE, 'default' => 0x01, 'size' => 'tiny', 'description' => 'The exportable status of the entity.'));
+  db_change_field('commerce_discount', 'enabled', 'status', array('type' => 'int', 'not null' => TRUE, 'default' => 1, 'size' => 'tiny', 'description' => 'Whether the discount is active.'));
+  // Rebuild the schema.
+  drupal_get_complete_schema(TRUE);
 }

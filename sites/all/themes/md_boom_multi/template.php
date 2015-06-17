@@ -155,7 +155,7 @@ function md_boom_multi_form_alter(&$form, &$form_state, $form_id) {
     }
 }
 
-print_r($variables['theme_hook_suggestions']);
+//print_r($variables['theme_hook_suggestions']);
 
 
 /**

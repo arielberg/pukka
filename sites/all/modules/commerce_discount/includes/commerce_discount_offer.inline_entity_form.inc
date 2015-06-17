@@ -11,13 +11,26 @@ class CommerceDiscountOfferInlineEntityFormController extends EntityInlineEntity
    * Overrides EntityInlineEntityFormController::entityForm().
    */
   public function entityForm($entity_form, &$form_state) {
+    // If we're cloning, we want to clone the offer entity too.
+    if ($form_state['op'] === 'clone') {
+      unset($entity_form['#entity']->discount_offer_id);
+      $entity_form['#entity']->is_new = TRUE;
+    }
+
     $offer = $entity_form['#entity'];
     if (!empty($form_state['values'])) {
       $offer_values = drupal_array_get_nested_value($form_state['values'], $entity_form['#parents']);
       // If the type was changed via AJAX, change it on the entity.
       if (!empty($offer_values['type'])) {
-        $offer->type = $offer_values['type'];
+        // We have to use the formstate to hold this, because if other elements
+        // set #limit_validation_errors, form state values will not contain what
+        // we need.
+        $form_state['commerce_dicount_offer_selection_' . $entity_form['#ief_id']] = $offer_values['type'];
       }
+    }
+
+    if (isset($form_state['commerce_dicount_offer_selection_' . $entity_form['#ief_id']])) {
+      $offer->type = $form_state['commerce_dicount_offer_selection_' . $entity_form['#ief_id']];
     }
 
     // Get discount type.

@@ -70,7 +70,6 @@ regions[footer_col_4] = Footer Column 4
 
 regions[footer] = Footer
 
-project status url = http://updates.megadrupal.com/release-history
 version = "7.x-2.0"
 core = "7.x"
 project = "md_boom_multi"
