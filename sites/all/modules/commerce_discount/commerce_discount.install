@@ -127,7 +127,7 @@ function commerce_discount_requirements($phase) {
  * The instance will be added for every newly created bundle.
  */
 function commerce_discount_install_helper() {
-  $fields = field_read_fields(array(), array('include_inactive' => TRUE));
+  $fields = field_read_fields(array(), array('include_inactive' => false));
   $field_types = field_info_field_types();
 
   // Clear field info cache, so entity reference, inline_conditions and

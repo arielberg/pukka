@@ -68,7 +68,11 @@
 <?php if ($node->type == "product") : ?>
   <span class="search-image"><?php print theme_image_style(array( 'path' => $node->field_blog_thumbnail['und']['0']['uri'], 'style_name' => 'thumbnail')); ?></span>
 <?php endif; ?>
-<?php print $content['field_products:product:field_normal_price'][0]['#markup']; ?>
+<?php 
+	if(isset($content)&&isset($content['field_products:product:field_normal_price'])){
+	print $content['field_products:product:field_normal_price'][0]['#markup']; 
+	}
+?>
   <?php print render($title_prefix); ?>
   <h3 class="title"<?php print $title_attributes; ?>>
     <a href="<?php print $url; ?>"><?php print $title; ?></a>

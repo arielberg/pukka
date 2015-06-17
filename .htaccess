@@ -1,7 +1,3 @@
-#RewriteCond %{HTTP_HOST} ^greenmarks\.co\.il$ [OR]
-#RewriteCond %{HTTP_HOST} ^www\.greenmarks\.co\.il$
-#RewriteRule ^(.*)$ "https\:\/\/greenmarks\.co\.il\/$1" [R=301,L]
-
 #
 # Apache/PHP/Drupal settings:
 #
@@ -111,7 +107,7 @@ DirectoryIndex index.php index.html index.htm
   #
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:
- 	#RewriteBase /
+  # RewriteBase /
 
   # Pass all requests not referring directly to files in the filesystem to
   # index.php. Clean URLs are handled in drupal_environment_initialize().
@@ -145,16 +141,3 @@ DirectoryIndex index.php index.html index.htm
     </FilesMatch>
   </IfModule>
 </IfModule>
-
-RewriteCond %{HTTP_HOST} ^navitasnaturals\.co\.il$ [OR]
-RewriteCond %{HTTP_HOST} ^www\.navitasnaturals\.co\.il$
-RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il\/" [R=301,L]
-
-RewriteCond %{HTTP_HOST} ^navitas\.co\.il$ [OR]
-RewriteCond %{HTTP_HOST} ^www\.navitas\.co\.il$
-RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il\/" [R=301,L]
-
-RewriteCond %{HTTP_HOST} ^pukka\.co\.il$ [OR]
-RewriteCond %{HTTP_HOST} ^www\.pukka\.co\.il$
-RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il\/" [R=301,L]
-

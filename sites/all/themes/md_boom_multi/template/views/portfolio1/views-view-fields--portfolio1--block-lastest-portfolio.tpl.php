@@ -39,7 +39,13 @@ if($fields['field_portfolio_thumbnail']->content){
 <div class="element flx-<?php print $row->field_field_portfolio_taxonomy[0]['raw']['tid'];?>">
     <p class="number"><?php print $layout_value;?></p>
     <div class="mask">
-        <a class="flx-pf-gallery" href="/node/<?php print $row->field_field_node_reference[0]['raw']['target_id'];?>"></a>
+		<?php 
+			$target_id = "";
+			if(isset($row->field_field_node_reference[0])){
+				$target_id = $row->field_field_node_reference[0]['raw']['target_id'];
+			}
+		?>
+        <a class="flx-pf-gallery" href="/node/<?php print $target_id?>"></a>
       <h4 class="node-<?php print $view->name;?>-title"><a class="flx-pf-detail" href="/node/<?php print $row->field_field_node_reference[0]['raw']['target_id'];?>" ><?php print $row->node_title;?></a></h4>
     </div>
     <?php global $user; ?>
