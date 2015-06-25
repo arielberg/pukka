@@ -22,9 +22,13 @@
  *
  * @ingroup views_templates
  */
+ $tid = "";
+ if(isset($row->field_field_product_type[0])){
+	$tid = $row->field_field_product_type[0]['raw']['tid'];
+ }
 ?>
 
-<div class="element portfolio3 flx-<?php print $row->field_field_product_type[0]['raw']['tid'];?> width6 height2">
+<div class="element portfolio3 flx-<?php print $tid; ?> width6 height2">
     <div class="mask">
       <h4 class="price"><a href="/node/<?php print $row->nid;?>">    <?php print $fields['commerce_price']->content;?></a></h4>
         <a class="flx-pf-gallery" href="/node/<?php print $row->nid;?>"></a>

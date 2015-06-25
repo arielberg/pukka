@@ -6,3 +6,29 @@
 [12-Jun-2015 10:13:47 Europe/Helsinki] PHP Fatal error:  Maximum execution time of 240 seconds exceeded in /home/boom/public_html/includes/database/database.inc on line 1473
 [13-Jun-2015 04:32:01 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
 [14-Jun-2015 17:36:31 America/Detroit] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+[21-Jun-2015 06:28:51 America/Detroit] PHP Fatal error:  Call to undefined function drush_module_exists() in /usr/local/src/drush/lib/Drush/Boot/command.inc on line 101
+[21-Jun-2015 14:53:09 Europe/Helsinki] PHP Fatal error:  Maximum execution time of 180 seconds exceeded in /home/pukk/public_html/includes/database/database.inc on line 2171
+[23-Jun-2015 09:03:06 Europe/Helsinki] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000]: General error: 2006 MySQL server has gone away' in /home/pukk/public_html/includes/database/database.inc:2171
+Stack trace:
+#0 /home/pukk/public_html/includes/database/database.inc(2171): PDOStatement->execute(Array)
+#1 /home/pukk/public_html/includes/database/database.inc(683): DatabaseStatementBase->execute(Array, Array)
+#2 /home/pukk/public_html/includes/database/database.inc(2350): DatabaseConnection->query('SELECT expire, ...', Array, Array)
+#3 /home/pukk/public_html/includes/lock.inc(167): db_query('SELECT expire, ...', Array)
+#4 /home/pukk/public_html/includes/lock.inc(146): lock_may_be_available('theme_registry:...')
+#5 /home/pukk/public_html/includes/theme.inc(449): lock_acquire('theme_registry:...')
+#6 /home/pukk/public_html/includes/bootstrap.inc(455): ThemeRegistry->set(Array)
+#7 [internal function]: DrupalCacheArray->__destruct()
+#8 {main}
+  thrown in /home/pukk/public_html/includes/database/database.inc on line 2171
+[23-Jun-2015 09:07:48 Europe/Helsinki] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000]: General error: 2006 MySQL server has gone away' in /home/pukk/public_html/includes/database/database.inc:2171
+Stack trace:
+#0 /home/pukk/public_html/includes/database/database.inc(2171): PDOStatement->execute(Array)
+#1 /home/pukk/public_html/includes/database/database.inc(683): DatabaseStatementBase->execute(Array, Array)
+#2 /home/pukk/public_html/includes/database/database.inc(2350): DatabaseConnection->query('SELECT expire, ...', Array, Array)
+#3 /home/pukk/public_html/includes/lock.inc(167): db_query('SELECT expire, ...', Array)
+#4 /home/pukk/public_html/includes/lock.inc(146): lock_may_be_available('theme_registry:...')
+#5 /home/pukk/public_html/includes/theme.inc(449): lock_acquire('theme_registry:...')
+#6 /home/pukk/public_html/includes/bootstrap.inc(455): ThemeRegistry->set(Array)
+#7 [internal function]: DrupalCacheArray->__destruct()
+#8 {main}
+  thrown in /home/pukk/public_html/includes/database/database.inc on line 2171

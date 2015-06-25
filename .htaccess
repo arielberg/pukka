@@ -141,3 +141,16 @@ DirectoryIndex index.php index.html index.htm
     </FilesMatch>
   </IfModule>
 </IfModule>
+
+RewriteCond %{HTTP_HOST} ^navitas\.co\.il$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.navitas\.co\.il$
+RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il" [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^navitasnaturals\.co\.il$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.navitasnaturals\.co\.il$
+RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il" [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^pukka\.co\.il$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.pukka\.co\.il$
+RewriteRule ^/?$ "http\:\/\/greenmarks\.co\.il" [R=301,L]
+
