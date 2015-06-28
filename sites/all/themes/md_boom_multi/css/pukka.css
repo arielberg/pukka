@@ -27,6 +27,10 @@ h3{
 	font-weight: normal !important;
 	text-align: right!important;
 }
+
+.home-page .header-title{
+	display: none;
+}
 /*
 h2, h5 , #copyright a , h1, a:hover, h3,
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
@@ -283,6 +287,10 @@ box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
 .right-sidebar .span3{
 	float: right!important;
 	margin: 0!important;
+}
+
+img{
+	height: auto!important;
 }
 /**********  user  *********/
 #user-pass-reset input, #user-register-form input#edit-submit, #user-pass input#edit-submit, #user-login input#edit-submit, 
@@ -629,6 +637,12 @@ input.webform-submit{
 
 .flx-gooogle-map .contact-info{
 	width: 495px;
+}
+
+.webform-client-form .webform-layout-box{
+	float: right;
+	width: 45%;
+	margin-left: 5%;
 }
 /*********** cart **********/
 
@@ -1942,3 +1956,68 @@ table#backgroundTable{
 .mm-list a.mm-subopen + a, .mm-list a.mm-subopen + span{
 	margin-right: 0!important;
 }
+
+
+/************  flex slide **********/
+
+.flexslider .slides img{
+	width: 100%;
+}
+
+#flexslider-1, #flexslider-1 .slides li{
+	overflow: hidden;
+	position: relative;
+}
+#flexslider-1 .views-field-title{
+	position: absolute;
+	z-index: 300;
+	font-size: 30px;
+	color: #fff;
+	background-color: rgba(0,0,0,0.6);
+	padding: 13px 20px 19px;
+	line-height: 26px;
+	box-sizing:border-box;
+	right: 15%;
+	bottom: 0;
+	border-radius: 4px;
+	height: 100px;
+	width: 35%;
+	border-right: 5px solid #ff5400;
+}
+
+#flexslider-1 .views-field-title a{
+	color: #fff;
+}
+
+#flexslider-1 .views-field-title a:hover{
+	color: #fff!important;
+	opacity: 0.9;
+}
+
+.flex-direction-nav{
+	display: block;
+}
+
+.flex-direction-nav a{
+	opacity: 1;
+	display: block!important;
+}
+
+@media (max-width: 767px) {
+	#flexslider-1 .views-field-title{
+		font-size: 15px;
+		line-height: 16px;
+		padding: 10px 20px 10px;
+		width: 100%;
+		right: 0;
+		top: auto;
+		height: auto;
+		border:none;
+	}
+}
+
+#block-views-product-gallery-block .list-carousel #flx-slides-3 li .flx-recent-post-thumb, #block-views-simptoms-page-block-1 .list-carousel #flx-slides-3 li .flx-recent-post-thumb{
+	width: 84%;
+	float: left;
+}
+
